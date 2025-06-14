@@ -1,0 +1,225 @@
+$Color1: #818181;
+$Color2: #001020;
+
+.admin-home {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .left-box {
+    width: 20%;
+    height: 100%;
+    padding-top: 15px;
+    background: linear-gradient(to right, #333333, #4db6ac);
+    position: relative;
+    transition: 0.4s;
+    .logo {
+      margin: 0 auto;
+      width: 120px;
+      img {
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+    }
+    .hide-logo{
+     width: 50px;
+    }
+
+
+    .line {
+      margin: 15px auto 0 auto;
+      width: 75%;
+      height: 2px;
+      background: white;
+      background: linear-gradient(90deg, rgba(249, 246, 255, 0) 0%, rgba(249, 246, 255, 1) 50%, rgba(249, 246, 255, 0) 100%);
+      border-radius: 50%;
+    }
+
+    .header {
+      margin-top: 25px;
+      width: 100%;
+      height: 40px;
+      display: flex;
+      border-bottom: 1px solid white;
+
+      .item {
+        font-size: 18px;
+        font-weight: 500;
+        width: 50%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        transition: .4s;
+      }
+
+      .active {
+        box-shadow: rgb(135, 135, 135) 0px 10px 60px -10px inset, rgb(208, 208, 208) 0px 10px 20px -18px inset;
+      }
+    }
+
+    .admin-navbar {
+      width: 100%;
+      height: 69vh;
+      padding-left: 3px;
+
+      &::-webkit-scrollbar {
+        width: 8px;
+        border-radius: 20px;
+      }
+      &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-color: #515151;
+        outline: none;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      .nav-item {
+        font-size: 16px;
+        padding-left: 10px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 40px;
+        color: white;
+        margin-top: 10px;
+        cursor: pointer;
+        border-left: 4px solid transparent;
+        transition: .3s linear;
+
+        img {
+          margin-right: 14px;
+          width: 30px;
+
+        }
+      }
+
+      .active {
+        border-left: 4px solid white;
+        background-color: rgba(255, 255, 255, 0.25);
+      }
+
+    }
+
+    .circle{
+      transition: 0.4s;
+      position: absolute;
+      top: 1%;
+      right: -15px;
+      width: 30px;
+      height: 30px;
+      background-color: white;
+      border-radius: 50%;
+      border: 1px solid $Color1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img{
+        width: 50%;
+        margin: 0 auto;
+      }
+
+    }
+
+    .circle-rotate{
+      transform: rotate(180deg);
+    }
+  }
+
+  .hide-left{
+    width: 4.3%;
+  }
+
+  .right-box {
+    width: 80%;
+    height: 100%;
+    transition: 0.4s;
+
+    .top-box {
+      width: 95%;
+      margin: 10px auto 0px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .title{
+        img{
+          width: 150px;
+        }
+      }
+      .icons {
+        display: flex;
+        .exit {
+          width: 35px;
+          height: 35px;
+          cursor: pointer;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+      }
+      .dropdown {
+        margin-right: 16px;
+
+        .dropdown-toggle {
+          display: flex;
+          align-items: center;
+          background-color: white;
+          padding: 10px 20px;
+          border: 1px solid #A2A4A63D;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: 0.3s;
+          color: rgba(20, 20, 20, 1);
+
+          &:hover {
+            background-color: #f8f8f8;
+          }
+
+          .globe {
+            width: 22px;
+          }
+
+          .name {
+            margin-left: 6px;
+            margin-right: 6px;
+          }
+        }
+
+        .dropdown-menu {
+          border-radius: 16px;
+          overflow: hidden;
+
+          .dropdown-item {
+            &:active {
+              background-color: transparent !important;
+              color: inherit !important;
+            }
+          }
+        }
+
+      }
+    }
+
+    .bottom-box {
+      padding: 8px;
+      width: 100%;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+  }
+
+  .show-right{
+    width: 95%;
+  }
+}

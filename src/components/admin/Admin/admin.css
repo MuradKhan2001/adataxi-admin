@@ -1,0 +1,188 @@
+.admin-home {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; }
+  .admin-home .left-box {
+    width: 18%;
+    height: 97%;
+    padding-top: 15px;
+    background-color: #00C389;
+    border-radius: 30px;
+    position: relative;
+    transition: 0.4s; }
+    .admin-home .left-box .logo {
+      margin: 0 auto;
+      width: 120px; }
+      .admin-home .left-box .logo img {
+        width: 100%;
+        height: 100%;
+        cursor: pointer; }
+    .admin-home .left-box .hide-logo {
+      width: 50px; }
+    .admin-home .left-box .line {
+      margin: 15px auto 0 auto;
+      width: 75%;
+      height: 2px;
+      background: white;
+      background: linear-gradient(90deg, rgba(249, 246, 255, 0) 0%, #f9f6ff 50%, rgba(249, 246, 255, 0) 100%);
+      border-radius: 50%; }
+    .admin-home .left-box .header {
+      margin-top: 25px;
+      width: 100%;
+      height: 40px;
+      display: flex;
+      border-bottom: 1px solid white; }
+      .admin-home .left-box .header .item {
+        font-size: 18px;
+        font-weight: 500;
+        width: 50%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        transition: .4s; }
+      .admin-home .left-box .header .active {
+        box-shadow: #878787 0px 10px 60px -10px inset, #d0d0d0 0px 10px 20px -18px inset; }
+    .admin-home .left-box .admin-navbar {
+      width: 100%;
+      height: 69vh;
+      padding-left: 3px; }
+      .admin-home .left-box .admin-navbar::-webkit-scrollbar {
+        width: 8px;
+        border-radius: 20px; }
+      .admin-home .left-box .admin-navbar::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-color: #515151;
+        outline: none; }
+      .admin-home .left-box .admin-navbar a {
+        text-decoration: none; }
+      .admin-home .left-box .admin-navbar .nav-item {
+        font-size: 16px;
+        padding-left: 10px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 40px;
+        color: white;
+        margin-top: 10px;
+        cursor: pointer;
+        border-left: 4px solid transparent;
+        transition: .3s linear; }
+        .admin-home .left-box .admin-navbar .nav-item img {
+          margin-right: 14px;
+          width: 30px; }
+      .admin-home .left-box .admin-navbar .active {
+        border-left: 4px solid white;
+        background-color: rgba(255, 255, 255, 0.25); }
+    .admin-home .left-box .circle {
+      transition: 0.4s;
+      position: absolute;
+      top: 48%;
+      right: -15px;
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 50%;
+      border: 1px solid #00C389;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center; }
+      .admin-home .left-box .circle img {
+        width: 60%;
+        margin: 0 auto; }
+    .admin-home .left-box .circle-rotate {
+      transform: rotate(180deg); }
+  .admin-home .hide-left {
+    width: 4.3%; }
+  .admin-home .right-box {
+    width: 81%;
+    height: 100%;
+    transition: 0.4s; }
+    .admin-home .right-box .top-box {
+      width: 95%;
+      margin: 10px auto 0px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center; }
+      .admin-home .right-box .top-box .title img {
+        width: 120px; }
+      .admin-home .right-box .top-box .icons {
+        display: flex; }
+        .admin-home .right-box .top-box .icons .exit {
+          width: 35px;
+          height: 35px;
+          cursor: pointer; }
+          .admin-home .right-box .top-box .icons .exit img {
+            width: 100%;
+            height: 100%; }
+    .admin-home .right-box .bottom-box {
+      padding: 8px;
+      width: 100%;
+      height: calc(100vh - 60px); }
+  .admin-home .show-right {
+    width: 95%; }
+
+@media (max-width: 768px) {
+  .admin-home {
+    width: 100%;
+    height: 100vh;
+    background-image: url("./images/bg4.jpg");
+    background-size: 100%;
+    display: flex; }
+    .admin-home .left-box .logo {
+      width: 70px; }
+    .admin-home .left-box .line {
+      margin: 10px auto 0 auto;
+      width: 100%; }
+    .admin-home .left-box .header {
+      height: auto;
+      display: block; }
+      .admin-home .left-box .header .item {
+        font-size: 16px;
+        width: 100%;
+        height: 30px; }
+    .admin-home .left-box .admin-navbar .nav-item {
+      font-size: 16px;
+      padding-left: 5px;
+      justify-content: center;
+      height: 40px; }
+      .admin-home .left-box .admin-navbar .nav-item span {
+        display: none; }
+      .admin-home .left-box .admin-navbar .nav-item img {
+        margin-right: 0px;
+        width: 25px; }
+    .admin-home .left-box .admin-navbar .active {
+      border-left: 4px solid white;
+      border-right: 4px solid white;
+      background-color: rgba(255, 255, 255, 0.1); }
+    .admin-home .right-box {
+      width: 82%;
+      height: 100%; }
+      .admin-home .right-box .top-box {
+        width: 100%;
+        height: 50px; }
+        .admin-home .right-box .top-box .statistic-box {
+          display: none; }
+        .admin-home .right-box .top-box .icons {
+          width: 100%;
+          display: flex;
+          justify-content: space-between; }
+          .admin-home .right-box .top-box .icons .language-box .lng-item {
+            margin-right: 20px; }
+          .admin-home .right-box .top-box .icons .exit {
+            width: 20px;
+            height: 20px; }
+            .admin-home .right-box .top-box .icons .exit img {
+              width: 100%;
+              height: 100%; }
+      .admin-home .right-box .bottom-box {
+        padding: 4px;
+        width: 100%;
+        height: calc(100vh - 50px); } }
+
+/*# sourceMappingURL=admin.css.map */
