@@ -8,6 +8,7 @@ const RejectReason = () => {
     let value = useContext(MyContext);
     const [colorsList, setColorsList] = useState([])
     const [edit, setEdit] = useState(false)
+    const [rejectStatus, setRejectStatus] = useState("")
     const [editId, setEditId] = useState('')
     const [translations, setTranslations] = useState(
         {
@@ -16,17 +17,14 @@ const RejectReason = () => {
             name_en: ""
         })
 
-    const getData = () => {
-        axios.get(`${value.url}/dashboard/rejectreson/`,{
+    const getData = (status) => {
+        setRejectStatus(status)
+        axios.get(`${value.url}/dashboard/rejectreson/?type=${status}`, {
             headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
         }).then((response) => {
             setColorsList(response.data);
         })
     }
-
-    useEffect(() => {
-        getData()
-    }, []);
 
     const addColor = (status) => {
         const {name_uz, name_ru, name_en} = translations;
@@ -51,7 +49,7 @@ const RejectReason = () => {
         };
 
         if (status === "add") {
-            axios.post(`${value.url}/dashboard/rejectreson/`, {translations: translation_list},
+            axios.post(`${value.url}/dashboard/rejectreson/`, {type: rejectStatus, translations: translation_list},
                 {
                     headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
                 })
@@ -65,7 +63,10 @@ const RejectReason = () => {
         }
 
         if (status === "edit") {
-            axios.put(`${value.url}/dashboard/rejectreson/${editId}/`, {translations: translation_list},
+            axios.put(`${value.url}/dashboard/rejectreson/${editId}/`, {
+                    type: rejectStatus,
+                    translations: translation_list
+                },
                 {
                     headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
                 })
@@ -81,7 +82,7 @@ const RejectReason = () => {
     };
 
     const delColor = (id) => {
-        axios.delete(`${value.url}/dashboard/rejectreson/${id}/`,{
+        axios.delete(`${value.url}/dashboard/rejectreson/${id}/`, {
             headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
         }).then((response) => {
             setTranslations({name_uz: "", name_ru: "", name_en: ""});
@@ -103,6 +104,15 @@ const RejectReason = () => {
     return <div className="reject-reason-wrapper">
         <div className="header">
             <div className="form-wrapper">
+                <label htmlFor="status">Moshina brendini tanlang: </label>
+                <select onChange={(e) => getData(e.target.value)} name="status"
+                        id="status">
+                    <option value=""></option>
+                    <option value="driver">Haydovchi</option>
+                    <option value="client">Mijoz</option>
+                    <option value="admin">Admin</option>
+                </select>
+
                 <input
                     value={translations.name_uz}
                     onChange={(e) =>

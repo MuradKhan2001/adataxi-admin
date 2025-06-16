@@ -40,7 +40,6 @@
     align-items: center;
     overflow-y: auto;
 
-
     .modal-card {
       width: max-content;
       height: max-content;
@@ -140,6 +139,10 @@
             font-size: 18px;
             padding-left: 10px;
           }
+
+          label {
+            margin-top: 20px;
+          }
         }
 
         .success-btn {
@@ -167,6 +170,53 @@
         }
       }
 
+      .statistic {
+        margin: 30px;
+        width: max-content;
+        height: max-content;
+
+        .cancel-btn {
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+
+          img {
+            cursor: pointer;
+            width: 30px;
+            transition: 0.3s;
+          }
+
+          &:hover {
+            img {
+              transform: scale(1.2);
+            }
+          }
+        }
+
+        .title {
+          text-align: center;
+          font-size: 24px;
+          line-height: 32px;
+        }
+
+        .form-box {
+          margin-top: 20px;
+          width: 100%;
+          .statistic-box {
+            display: flex;
+            align-items: center;
+
+            .name {
+              margin-right: 10px;
+            }
+
+            .num {
+
+            }
+          }
+        }
+      }
+
     }
   }
 
@@ -178,87 +228,101 @@
   }
 
   .header {
-    margin-top: 20px;
+    overflow-x: auto;
+    margin-top: 10px;
     width: 100%;
     height: max-content;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-right: 60px;
-    padding-left: 60px;
+    padding-right: 20px;
+    padding-left: 20px;
 
-    .search-box {
-      height: 40px;
-      border: 1px solid #818181;
+    .left-side {
       display: flex;
       align-items: center;
-      padding-right: 10px;
-      border-radius: 8px;
-      padding-left: 10px;
 
-      img {
-        width: 28px;
-        margin-right: 10px;
+      .search-box {
+        height: 37px;
+        border: 1px solid #818181;
+        display: flex;
+        align-items: center;
+        padding-right: 10px;
+        border-radius: 8px;
+        padding-left: 5px;
+        margin-right: 5px;
+
+        img {
+          width: 28px;
+          margin-right: 10px;
+        }
+
+        input {
+          height: 100%;
+          border: none;
+          font-size: 14px;
+
+          &:focus {
+            outline: none;
+          }
+        }
+
+        label {
+          margin-right: 5px;
+          font-size: 14px;
+        }
+
+        select {
+          border-radius: 10px;
+          height: 75%;
+          font-size: 14px;
+        }
       }
 
-      input {
-        height: 100%;
-        border: none;
+      .filter-btn {
+        margin-left: 10px;
 
-        &:focus {
-          outline: none;
+        &:hover {
+          img {
+            transform: scale(1.1);
+            cursor: pointer;
+
+          }
+
+        }
+
+        img {
+          width: 30px;
+          transition: 0.3s;
         }
       }
     }
 
     .statisitcs {
+      cursor: pointer;
+      align-items: center;
       display: flex;
 
-      .statistic-box {
-        margin-right: 15px;
-        border: 1px solid #00c389;
-        padding: 5px 15px;
-        border-radius: 10px;
-        cursor: pointer;
-        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-        transition: 0.3s;
-
-        .name {
-          color: #525960;
-          font-size: 14px;
-
-        }
-
-        .num {
-          text-align: center;
-          font-size: 20px;
-          font-weight: bold;
-          color: #00c389;
-
-        }
+      img {
+        margin-left: 5px;
+        width: 25px;
       }
 
-      .active {
-        background-color: #00C389;
-        color: #fff;
+      transition: .3s;
+      border: 1px solid #c6c6c6;
+      padding: 5px;
+      border-radius: 10px;
 
-        .name {
-          color: white;
-        }
-
-        .num {
-          color: white;
-
-        }
+      &:hover {
+        background: #efefef;
       }
-
     }
   }
 
   .wrapper-table {
-    margin-top: 30px;
+    margin-top: 10px;
     width: 100%;
-    height: 80%;
+    height: 78%;
     overflow-y: auto;
     padding-bottom: 40px;
 
@@ -305,12 +369,25 @@
             font-weight: bold;
             color: #717070;
 
+            .status-red{
+              color: #910000;
+            }
+
+            .status-green{
+              color: #079539;
+            }
+
+
             .icon {
               width: 100%;
               height: 100%;
               display: flex;
               align-items: center;
               justify-content: center;
+
+              .status-blue{
+              color: #074197;
+              }
 
               img {
                 width: 30px;
@@ -320,6 +397,10 @@
                 &:hover {
                   transform: scale(1.1);
                 }
+              }
+              .status-icon{
+                width: 25px;
+                margin-left: 5px;
               }
             }
 

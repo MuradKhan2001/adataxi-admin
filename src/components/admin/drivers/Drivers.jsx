@@ -173,7 +173,6 @@ const Drivers = () => {
             setExtra_servicesList(response.data);
         })
 
-
         axios.get(`${value.url}/dashboard/region/`, {
             headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
         }).then((response) => {
@@ -294,16 +293,19 @@ const Drivers = () => {
                 last_name: response.data.user.last_name,
                 birth_date: response.data.birth_date,
                 car_number: response.data.car_number,
-                car_color: response.data.car_color.id,
-                car_make: response.data.car_make.id,
-                car_model: response.data.car_model.id,
-                extra_services: response.data.extra_services.map(service => service.id),
+                car_color: response.data.car_color && response.data.car_color.id,
+                car_make: response.data.car_make && response.data.car_make.id,
+                car_model: response.data.car_model && response.data.car_model.id,
+                extra_services: response.data.extra_services.length > 0 ? response.data.extra_services.map(service => service.id) : [],
                 seat_count: response.data.seat_count,
-                from_region: response.data.from_region.id,
-                to_region: response.data.to_region.id,
+                from_region: response.data.from_region && response.data.from_region.id,
+                to_region: response.data.to_region && response.data.to_region.id,
             });
+
             setLuggage(response.data.user.gender)
-            getCarNames(response.data.car_make.id)
+            if (response.data.car_make) {
+                getCarNames(response.data.car_make.id)
+            }
         })
         setDriverId(id)
     }
@@ -338,6 +340,7 @@ const Drivers = () => {
                 : [...prevSelected, serviceId]
         );
     };
+
     const handleCheckboxChangeCategory = (serviceId) => {
         setCarCategoriesId((prevSelected) =>
             prevSelected.includes(serviceId)
@@ -345,6 +348,7 @@ const Drivers = () => {
                 : [...prevSelected, serviceId]
         );
     };
+
     const verify = () => {
         let driver = {
             driver_id: driverId,
@@ -490,7 +494,6 @@ const Drivers = () => {
         })
     }
 
-
     const productList = driversList.slice(pagesVisited, pagesVisited + worksPage)
         .filter((item) => {
             const searchText = getSearchText.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
@@ -528,13 +531,11 @@ const Drivers = () => {
                 <td>
                     {item.car_number && item.car_number}
                 </td>
-
                 <td>
                     <div className="icon">
                         <img onClick={() => getInformation(item.id)} src="./images/admin/sport-car.png" alt=""/>
                     </div>
                 </td>
-
                 <td>
                     <div className="icon">
                         <img onClick={() => getCarImages(item.id)} src="./images/admin/car-photo.png" alt=""/>
@@ -545,7 +546,6 @@ const Drivers = () => {
                         <img onClick={() => getDocsImages(item.id)} src="./images/admin/document.png" alt=""/>
                     </div>
                 </td>
-
                 <td>
                     <div className={item.is_confirmed ? "icon-check" : "icon-check disablet"}>
                         <img onClick={() => {

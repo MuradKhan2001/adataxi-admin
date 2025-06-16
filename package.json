@@ -29,7 +29,8 @@
     "react-transition-group": "^4.4.5",
     "sass": "^1.69.1",
     "slick-carousel": "^1.8.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "websocket": "^1.0.35"
   },
   "scripts": {
     "start": "react-scripts start",

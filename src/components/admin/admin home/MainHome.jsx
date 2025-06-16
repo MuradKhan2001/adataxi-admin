@@ -1,38 +1,58 @@
 import "./adminHome.scss"
-import {useEffect, useMemo, useState} from "react"
-import {GoogleMap, useLoadScript, Marker, InfoWindow} from "@react-google-maps/api";
+import {useEffect, useMemo, useState, createContext} from "react"
+import {GoogleMap, useLoadScript, MarkerF} from "@react-google-maps/api";
 import Loader from "./loader/Loader";
 import axios from "axios";
+import {w3cwebsocket as W3CWebSocket} from "websocket";
 
 const API_KEY = "AIzaSyBEN2azIRg6YCHa-tV8yAEUJoHsn__fRBM";
 
 const MainHome = () => {
     const [statisitc, setStatisitc] = useState([]);
-    const websocket = new WebSocket(`wss://api.buyukyol.uz/ws/orders/Tashkent/uzbekistan/?token=${localStorage.getItem('token')}`);
-
+    const [sockedContext, setSockedContext] = useState(null);
     const [locationsList, setLocationsList] = useState([]);
+    const [center, setCenter] = useState(null);
 
     useEffect(() => {
+        if (!localStorage.getItem("token")) return;
+
+        const websocket = new W3CWebSocket(`wss://api.adataxi.uz/ws/client/?token=${localStorage.getItem("token")}`);
+        setSockedContext(websocket);
+
+    }, []);
+
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const {latitude, longitude} = position.coords;
+            let locMy = {lat: latitude, lng: longitude};
+            setCenter(locMy);
+        });
+
+
         axios.get(`https://api.adataxi.uz/api/v1/site/statistics/`).then((response) => {
             setStatisitc(response.data[0])
         })
     }, []);
 
-    const [selectedLocation, setSelectedLocation] = useState(null);
-
-    const onMarkerClick = (location) => {
-        setSelectedLocation(location);
-    };
-
-    const onCloseClick = () => {
-        setSelectedLocation(null);
-    };
+    useEffect(() => {
+        if (!sockedContext) return;
+        sockedContext.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.message?.code === -35) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("userId");
+                window.location.pathname = "/";
+                return;
+            }
+            if (data.action === "driver_location") {
+                setLocationsList(data.message)
+            }
+        };
+    }, [sockedContext]);
 
     const {isLoaded} = useLoadScript({
         googleMapsApiKey: API_KEY
     });
-
-    const center = useMemo(() => ({lat: 41, lng: 65}), []);
 
     const options = useMemo(() => (
         {
@@ -84,46 +104,14 @@ const MainHome = () => {
                 options={options}
                 mapContainerClassName="map-container">
 
-                {locationsList.length >= 0 ?
-
-                    <>
-                        {locationsList.map((item) => {
-                            return <Marker
-                                key={Number(item.latitude)}
-                                position={{lat: Number(item.latitude), lng: Number(item.longitude)}}
-                                icon={icon}
-                                onClick={() => onMarkerClick(item)}
-                            />
-                        })}
-
-                        {selectedLocation && (
-                            <InfoWindow
-                                position={{
-                                    lat: Number(selectedLocation.latitude),
-                                    lng: Number(selectedLocation.longitude)
-                                }}
-                                onCloseClick={onCloseClick}
-                            >
-                                <div className="info-box">
-                                    <div className="info-text">
-                                        <span>Moshina raqam:</span>
-                                        {selectedLocation.car_number} <br/>
-                                        <span>Tel raqam:</span>
-                                        {selectedLocation.phone_number}
-                                    </div>
-                                </div>
-                            </InfoWindow>
-                        )}
-                    </>
-
-                    : ""
-                }
-
+                {locationsList.latitude && locationsList.longitude && (
+                    <MarkerF
+                        position={{lat: locationsList.latitude, lng: locationsList.longitude}}
+                        icon={icon}
+                    />)}
 
             </GoogleMap>
         </div>
-
-
     </div>
 };
 
