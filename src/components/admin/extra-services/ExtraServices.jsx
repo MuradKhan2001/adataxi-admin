@@ -3,8 +3,10 @@ import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {MyContext} from "../../App/App";
 import i18next from "i18next";
+import {useTranslation} from "react-i18next";
 
 const ExtraServices = () => {
+    const {t} = useTranslation();
     let value = useContext(MyContext);
     const [colorsList, setColorsList] = useState([])
     const [edit, setEdit] = useState(false)

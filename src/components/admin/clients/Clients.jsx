@@ -7,8 +7,10 @@ import {TextField} from "@mui/material";
 import "./style.scss"
 import {MyContext} from "../../App/App";
 import LoaderAdmin from "../loader-admin/LoaderAdmin";
+import {useTranslation} from "react-i18next";
 
 const Clients = () => {
+    const {t} = useTranslation();
     let value = useContext(MyContext);
     const [modalShow, setModalShow] = useState({show: false, status: false});
     const nodeRef = useRef(null);

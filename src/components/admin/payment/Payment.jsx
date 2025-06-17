@@ -30,8 +30,8 @@ const Payment = () => {
                 "Authorization": `Token ${localStorage.getItem("token")}`
             }
         }).then((response) => {
-            setDriversList(response.data.payment);
-            setStatistics(response.data.statistics);
+            console.log(response.data);
+            setDriversList(response.data);
         })
     }, []);
 
@@ -75,18 +75,6 @@ const Payment = () => {
                 <input onChange={(e) => setGetSearchText(e.target.value)} placeholder="ID kiritng" type="text"/>
             </div>
             <div className="statisitcs">
-                {statistics.length > 0 && statistics.map((item, index) => (
-                    <div key={index} className="statistic-box">
-                        <div className="name">
-                            {item.status === "refunded" && "Qaytarilgan"}
-                            {item.status === "waiting" && "Kutilmoqda"}
-                            {item.status === "confirmed" && "Tasdiqlangan"}
-                            {item.status === "rejected" && "Bekor qilingan"}
-
-                        </div>
-                        <div className="num">{item.count}</div>
-                    </div>
-                ))}
             </div>
         </div>
 

@@ -636,6 +636,7 @@
             }
 
           }
+
           .start {
             justify-content: flex-start;
           }
@@ -1043,7 +1044,7 @@
   }
 
   .header {
-    margin-top: 20px;
+    margin-top: 10px;
     width: 100%;
     height: max-content;
     display: flex;
@@ -1052,26 +1053,111 @@
     padding-right: 60px;
     padding-left: 60px;
 
-    .search-box {
-      height: 40px;
-      border: 1px solid #818181;
+    .left-side {
       display: flex;
       align-items: center;
-      padding-right: 10px;
-      border-radius: 8px;
-      padding-left: 10px;
 
-      img {
-        width: 28px;
+      .search-box {
+        height: 40px;
+        border: 1px solid #818181;
+        display: flex;
+        align-items: center;
+        padding-right: 10px;
+        border-radius: 6px;
+        padding-left: 10px;
         margin-right: 10px;
+
+        img {
+          width: 28px;
+          margin-right: 10px;
+        }
+
+        input {
+          height: 100%;
+          border: none;
+
+          &:focus {
+            outline: none;
+          }
+        }
       }
 
-      input {
-        height: 100%;
-        border: none;
+      .select-sides {
+        width: 250px;
+        margin-right: 10px;
 
-        &:focus {
-          outline: none;
+        .selectMui {
+          .MuiOutlinedInput-root {
+            &:hover {
+              .MuiOutlinedInput-notchedOutline {
+                border: 1px solid rgba(0, 173, 173, 1);
+              }
+            }
+          }
+
+          .MuiOutlinedInput-root.Mui-focused {
+            .MuiOutlinedInput-notchedOutline {
+              border: 1px solid rgba(0, 173, 173, 1);
+            }
+          }
+
+          .MuiInputLabel-root.Mui-focused {
+            color: rgba(0, 173, 173, 1);
+          }
+        }
+
+        .on-of {
+          margin-top: 5px;
+          display: flex;
+          align-items: center;
+          width: 90%;
+          height: 40px;
+          border-radius: 8px;
+          padding: 3px;
+          background-color: rgba(180, 192, 204, 0.16);
+
+          .on {
+            background-color: white;
+            color: rgba(38, 45, 51, 1);
+          }
+
+          .of {
+            cursor: pointer;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: rgba(133, 145, 158, 1);
+            transition: 0.3s;
+          }
+        }
+
+        .title-on {
+          color: rgb(135, 135, 135);
+          font-size: 14px;
+          font-weight: 400;
+        }
+
+        .textField {
+          .MuiOutlinedInput-root {
+            &:hover {
+              .MuiOutlinedInput-notchedOutline {
+                border: 1px solid #00c389;
+              }
+            }
+          }
+
+          .MuiOutlinedInput-root.Mui-focused {
+            .MuiOutlinedInput-notchedOutline {
+              border: 1px solid #00c389;
+            }
+          }
+
+          .MuiInputLabel-root.Mui-focused {
+            color: #00c389;
+          }
         }
       }
     }
@@ -1097,6 +1183,7 @@
     height: 80%;
     overflow-y: auto;
     padding-bottom: 40px;
+
     table {
       width: 100%;
       border: 1px solid #e8e6e6;
@@ -1183,7 +1270,7 @@
               justify-content: center;
 
               img {
-                width: 30px;
+                width: 25px;
                 cursor: pointer;
                 transition: 0.3s;
 
@@ -1211,7 +1298,7 @@
                 display: none;
                 width: 200px;
                 position: absolute;
-                left: -135%;
+                left: -145%;
                 top: 50%;
                 transform: translate(-50%, -50%);
                 background-color: rgba(255, 255, 255, 0.7);
@@ -1283,7 +1370,8 @@
   }
 
   .pagination {
-    margin-top: 15px;
+    margin-top: 10px;
+
     .paginationBttns {
 
       display: flex !important;

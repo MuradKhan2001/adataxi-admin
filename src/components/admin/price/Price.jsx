@@ -13,8 +13,10 @@ import "./style.scss"
 import axios from "axios";
 import {MyContext} from "../../App/App";
 import i18next from "i18next";
+import LoaderAdmin from "../loader-admin/LoaderAdmin";
 
 const Price = () => {
+    const [loader, setLoader] = useState(false);
     let value = useContext(MyContext);
     const [modalShow, setModalShow] = useState({show: false, status: false});
     const nodeRef = useRef(null);
@@ -28,7 +30,10 @@ const Price = () => {
     const [pageNumber, setPageNumber] = useState(0);
     const pagesVisited = pageNumber * worksPage;
 
-    const pageCount = Math.ceil(serviceList.length / worksPage);
+    const [from, setFrom] = useState("");
+    const [to, setTo] = useState("");
+    const [category, setCategory] = useState("");
+    const [service, setService] = useState("");
 
     const changePage = ({selected}) => {
         setPageNumber(selected)
@@ -77,11 +82,11 @@ const Price = () => {
 
     const sendAllInfo = () => {
         let allInfo = {
-            car_service: formik.values.car_service,
-            car_category: formik.values.car_category,
+            service: formik.values.car_service,
+            category: formik.values.car_category,
             from_region: formik.values.from_region,
             to_region: formik.values.to_region,
-            price: formik.values.price,
+            cost: Number(formik.values.price),
         }
 
         if (!editId) {
@@ -104,8 +109,9 @@ const Price = () => {
                     },
                 }).then((response) => {
                 getDrivers()
-                formik.resetForm();
                 setModalShow({status: "", show: false})
+                formik.resetForm();
+                setEditId("")
             })
         }
     }
@@ -144,51 +150,64 @@ const Price = () => {
     }
 
     const getDrivers = () => {
+        setLoader(true);
+
         axios.get(`${value.url}/dashboard/price/`, {
             headers: {
                 Authorization: `Token ${localStorage.getItem("token")}`,
             },
         }).then((response) => {
             setServiceList(response.data);
-        })
+            console.log(response.data);
+        }).finally(() => {
+            setLoader(false);
+        });
     }
 
     const editValues = (service) => {
         setEditId(service.id)
         setModalShow({show: true, status: "edit-driver"});
         formik.setValues({
-            car_service: service.car_service,
-            car_category: service.car_category,
-            from_region: service.from_region,
-            to_region: service.to_region,
-            price: service.price,
+            car_service: service.service.id,
+            car_category: service.category.id,
+            from_region: service.from_region.id,
+            to_region: service.to_region.id,
+            price: service.cost,
         });
     }
 
-    const productList = serviceList.slice(pagesVisited, pagesVisited + worksPage).map((item, index) => {
-        return <tr key={index}>
-            <td>{index + 1}</td>
-            <td>
-                {item.car_service}
-            </td>
-            <td>
-                {item.car_category}
-            </td>
-            <td>{item.from_region}</td>
-            <td>{item.to_region}</td>
-            <td>{item.price}</td>
-            <td>
-                <div className="icon">
-                    <img onClick={() => delColor(item.id)} src="./images/admin/delete.png" alt=""/>
-                </div>
-            </td>
-            <td>
-            </td>
-            <div className="edit-icon">
-                <img onClick={() => editValues(item)} src="./images/admin/edit-tools.png" alt=""/>
-            </div>
-        </tr>
+    const filteredList = serviceList.filter(item => {
+        const matchesService = service ? item.service.service_type === service : true;
+        const matchesCategory = category ? item.category.category_type === category : true;
+        const matchesFrom = from ? item.from_region.id === from : true;
+        const matchesTo = to ? item.to_region.id === to : true;
+
+        return matchesService && matchesCategory && matchesFrom && matchesTo;
     });
+
+    const pageCount = Math.ceil(filteredList.length / worksPage);
+
+    const productList = filteredList
+        .slice(pagesVisited, pagesVisited + worksPage)
+        .map((item, index) => (
+            <tr key={index}>
+                <td>{index + 1}</td>
+                <td>{item.service.translations?.[i18next.language]?.name}</td>
+                <td>{item.category.translations?.[i18next.language]?.name}</td>
+                <td>{item.from_region.translations?.[i18next.language]?.name}</td>
+                <td>{item.to_region.translations?.[i18next.language]?.name}</td>
+                <td>{item.cost}</td>
+                <td>
+                    <div className="icon">
+                        <img onClick={() => delColor(item.id)} src="./images/admin/delete.png" alt=""/>
+                    </div>
+                </td>
+                <td></td>
+                <div className="edit-icon">
+                    <img onClick={() => editValues(item)} src="./images/admin/edit-tools.png" alt=""/>
+                </div>
+            </tr>
+        ));
 
     return <div className="price-container">
         <CSSTransition
@@ -205,7 +224,10 @@ const Price = () => {
                         <div className="add-driver">
                             <div className="cancel-btn">
                                 <img
-                                    onClick={() => setModalShow({status: "", show: false})}
+                                    onClick={() => {
+                                        setModalShow({status: "", show: false})
+                                        formik.resetForm()
+                                    }}
                                     src="./images/admin/x.png"
                                     alt=""
                                 />
@@ -229,7 +251,7 @@ const Price = () => {
                                                 onChange={formik.handleChange}
                                             >
                                                 {direction.map((item, index) => (
-                                                    <MenuItem key={index} value={item.service_type}>
+                                                    <MenuItem key={index} value={item.id}>
                                                         {item.translations[i18next.language].name}
                                                     </MenuItem>
                                                 ))}
@@ -250,7 +272,7 @@ const Price = () => {
                                                 onChange={formik.handleChange}
                                             >
                                                 {tarif.map((item, index) => (
-                                                    <MenuItem key={index} value={item.category_type}>
+                                                    <MenuItem key={index} value={item.id}>
                                                         {item.translations[i18next.language].name}
                                                     </MenuItem>
                                                 ))}
@@ -333,7 +355,11 @@ const Price = () => {
                         <div className="add-driver">
                             <div className="cancel-btn">
                                 <img
-                                    onClick={() => setModalShow({status: "", show: false})}
+                                    onClick={() =>{
+                                        setModalShow({status: "", show: false})
+                                        formik.resetForm();
+                                        setEditId("")
+                                    }}
                                     src="./images/admin/x.png"
                                     alt=""
                                 />
@@ -357,7 +383,7 @@ const Price = () => {
                                                 onChange={formik.handleChange}
                                             >
                                                 {direction.map((item, index) => (
-                                                    <MenuItem key={index} value={item.service_type}>
+                                                    <MenuItem key={index} value={item.id}>
                                                         {item.translations[i18next.language].name}
                                                     </MenuItem>
                                                 ))}
@@ -378,7 +404,7 @@ const Price = () => {
                                                 onChange={formik.handleChange}
                                             >
                                                 {tarif.map((item, index) => (
-                                                    <MenuItem key={index} value={item.category_type}>
+                                                    <MenuItem key={index} value={item.id}>
                                                         {item.translations[i18next.language].name}
                                                     </MenuItem>
                                                 ))}
@@ -462,6 +488,94 @@ const Price = () => {
         </CSSTransition>
 
         <div className="header">
+            <div className="filter-form">
+                <div className="select-sides">
+                    <FormControl sx={{m: 1, minWidth: "100%"}} size="small" className="selectMui">
+                        <InputLabel id="demo-select-large-label">Yo'nalish</InputLabel>
+                        <Select
+                            labelid="demo-select-small-label"
+                            id="demo-select-small"
+                            value={service}
+                            label="Qayerga"
+                            name="service"
+                            onChange={(e) => setService(e.target.value)}
+                        >
+                            {direction.map((item, index) => (
+                                <MenuItem key={index} value={item.service_type}>
+                                    {item.translations[i18next.language].name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </div>
+
+                <div className="select-sides">
+                    <FormControl sx={{m: 1, minWidth: "100%"}} size="small" className="selectMui">
+                        <InputLabel id="demo-select-large-label">Tarif</InputLabel>
+                        <Select
+                            labelid="demo-select-small-label"
+                            id="demo-select-small"
+                            value={category}
+                            label="Tarif"
+                            name="car_category"
+                            onChange={(e) => setCategory(e.target.value)}
+                        >
+                            {tarif.map((item, index) => (
+                                <MenuItem key={index} value={item.category_type}>
+                                    {item.translations[i18next.language].name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </div>
+
+                <div className="select-sides">
+                    <FormControl sx={{m: 1, minWidth: "100%"}} size="small" className="selectMui">
+                        <InputLabel id="demo-select-large-label">Qayerdan</InputLabel>
+                        <Select
+                            labelid="demo-select-small-label"
+                            id="demo-select-small"
+                            value={from}
+                            label="Qayerdan"
+                            name="from"
+                            onChange={(e) => setFrom(e.target.value)}
+                        >
+                            {
+                                regions.map((item, index) => {
+                                    return <MenuItem key={index}
+                                                     value={item.id}>
+                                        {item.translations[i18next.language].name}
+                                    </MenuItem>
+                                })
+                            }
+                        </Select>
+                    </FormControl>
+                </div>
+
+                <div className="select-sides">
+                    <FormControl sx={{m: 1, minWidth: "100%"}} size="small" className="selectMui">
+                        <InputLabel id="demo-select-large-label">Qayerga</InputLabel>
+                        <Select
+                            labelid="demo-select-small-label"
+                            id="demo-select-small"
+                            value={to}
+                            label="Qayerga"
+                            name="to"
+                            onChange={(e) => setTo(e.target.value)}
+                        >
+                            {
+                                regions.map((item, index) => {
+                                    return <MenuItem key={index}
+                                                     value={item.id}>
+                                        {item.translations[i18next.language].name}
+                                    </MenuItem>
+                                })
+                            }
+                        </Select>
+                    </FormControl>
+                </div>
+            </div>
+
             <div onClick={() => {
                 setModalShow({show: true, status: "add-driver"});
             }} className="add-driver-btn">
@@ -469,7 +583,7 @@ const Price = () => {
             </div>
         </div>
 
-        <div className="table-wrapper">
+        {loader ? <LoaderAdmin/> : <div className="table-wrapper">
             <table>
                 <thead>
                 <tr>
@@ -488,7 +602,7 @@ const Price = () => {
                 {productList}
                 </tbody>
             </table>
-        </div>
+        </div>}
 
         <div className="pagination">
             {serviceList.length > 50 ? <ReactPaginate

@@ -72,16 +72,16 @@ const Admin = () => {
         //     img: "../images/admin/list.png"
         // },
 
-        // {
-        //     name: "Balans",
-        //     url: "/balance",
-        //     img: "../images/admin/wallet.png"
-        // },
-        // {
-        //     name: "To'lov tizimi",
-        //     url: "/payment",
-        //     img: "../images/admin/credit-card.png"
-        // },
+        {
+            name: "Balans",
+            url: "/balance",
+            img: "../images/admin/wallet.png"
+        },
+        {
+            name: "To'lov tizimi",
+            url: "/payment",
+            img: "../images/admin/credit-card.png"
+        },
     ];
 
     useEffect(() => {
@@ -122,8 +122,16 @@ const Admin = () => {
         i18next.changeLanguage(code);
     };
 
-    return <div className="admin-home">
+    const logOut = () => {
+        const isConfirmed = window.confirm("Rostdan ham profildan chiqmoqchimisz?");
+        if (isConfirmed) {
+            window.location.pathname = "/";
+            localStorage.removeItem("admin")
+            localStorage.removeItem("token")
+        }
+    }
 
+    return <div className="admin-home">
         <div className={`left-box ${adminMenu ? "" : "hide-left"}`}>
 
             <div className={`logo ${adminMenu ? "" : "hide-logo"}`}>
@@ -136,7 +144,7 @@ const Admin = () => {
                         return <NavLink to={item.url} key={index}
                                         className={`nav-item ${({isActive}) => isActive ? "active" : ""}`}>
                             <img src={item.img} alt=""/>
-                            {adminMenu ?  <span>{item.name}</span> :""}
+                            {adminMenu ? <span>{item.name}</span> : ""}
                         </NavLink>
                     })
                 }
@@ -148,7 +156,7 @@ const Admin = () => {
 
         </div>
 
-        <div className={`right-box ${adminMenu ? "" :"show-right"}`}>
+        <div className={`right-box ${adminMenu ? "" : "show-right"}`}>
             <div className="top-box">
                 <div className="languge">
                     <Dropdown>
@@ -174,15 +182,11 @@ const Admin = () => {
                         </Dropdown.Menu>
                     </Dropdown>
                 </div>
-                <div className="title" >
+                <div className="title">
                     <img src="./images/logo.png" alt=""/>
                 </div>
                 <div className="icons">
-                    <div onClick={() => {
-                        window.location.pathname = "/";
-                        localStorage.removeItem("admin")
-                        localStorage.removeItem("token")
-                    }} className="exit"><img src="./images/admin/logout.png" alt=""/></div>
+                    <div onClick={() => logOut()} className="exit"><img src="./images/admin/logout.png" alt=""/></div>
                 </div>
             </div>
 

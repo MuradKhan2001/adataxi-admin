@@ -20,6 +20,7 @@
     "react-countup": "^6.5.3",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.3.1",
+    "react-image-lightbox": "^5.1.4",
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.18.0",
     "react-scripts": "5.0.1",

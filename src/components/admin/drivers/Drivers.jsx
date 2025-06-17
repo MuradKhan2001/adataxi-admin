@@ -18,6 +18,8 @@ import "./style.scss"
 import {MyContext} from "../../App/App";
 import {useTranslation} from "react-i18next";
 import LoaderAdmin from "../loader-admin/LoaderAdmin";
+import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css';
 
 const Drivers = () => {
     const {t} = useTranslation();
@@ -69,7 +71,10 @@ const Drivers = () => {
     const worksPage = 100;
     const [pageNumber, setPageNumber] = useState(0);
     const pagesVisited = pageNumber * worksPage;
-    const pageCount = Math.ceil(driversList.length / worksPage);
+
+    const [confirmFilter, setConfirmFilter] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+    const [currentImage, setCurrentImage] = useState("");
 
     const validate = (values) => {
         const errors = {};
@@ -183,7 +188,6 @@ const Drivers = () => {
 
     const getDrivers = () => {
         setLoader(true);
-
         axios.get(`${value.url}/dashboard/driver/`, {
             headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
         }).then((response) => {
@@ -494,97 +498,131 @@ const Drivers = () => {
         })
     }
 
-    const productList = driversList.slice(pagesVisited, pagesVisited + worksPage)
-        .filter((item) => {
-            const searchText = getSearchText.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
-            const phoneNumber = item.phone.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
-            return searchText === "" || phoneNumber.includes(searchText);
-        }).map((item, index) => {
-            return <tr key={index}>
-                <td>{index + 1}</td>
-                <td className="driver-wrapper">
-                    <div className="icon-driver">
-                        <img onClick={() => {
-                            setModalShow({show: true, status: "driver-photo"});
-                            setDriverPhoto(item.profile_image)
-                        }} src={item.profile_image} alt=""/>
-                    </div>
-                    <div className="text-driver">
-                        <div className="name">
-                            {item.user_name && item.user_name}
-                        </div>
-                        <div className="phone">
-                            {item.phone && item.phone}
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    {item.from_region && item.from_region.translations[i18next.language].name}
-                    --
-                    {item.to_region && item.to_region.translations[i18next.language].name}
-                </td>
-                <td>
-                    {item.car_color && item.car_color.translations[i18next.language].name}&nbsp;
-                    {item.car_make && item.car_make.translations[i18next.language].name} &nbsp;
-                    {item.car_model && item.car_model.translations[i18next.language].name}
-                </td>
-                <td>
-                    {item.car_number && item.car_number}
-                </td>
-                <td>
-                    <div className="icon">
-                        <img onClick={() => getInformation(item.id)} src="./images/admin/sport-car.png" alt=""/>
-                    </div>
-                </td>
-                <td>
-                    <div className="icon">
-                        <img onClick={() => getCarImages(item.id)} src="./images/admin/car-photo.png" alt=""/>
-                    </div>
-                </td>
-                <td>
-                    <div className="icon">
-                        <img onClick={() => getDocsImages(item.id)} src="./images/admin/document.png" alt=""/>
-                    </div>
-                </td>
-                <td>
-                    <div className={item.is_confirmed ? "icon-check" : "icon-check disablet"}>
-                        <img onClick={() => {
-                            setModalShow({show: true, status: "driver-service"});
-                            setDriverId(item.id)
-                            setCarServiceId(item.available_services)
-                            setCarCategoriesId(item.available_categories)
-                        }} src="./images/admin/check.png" alt=""/>
-                    </div>
-                </td>
-                <td>
-                    <div className={item.is_block ? "icon-check" : "icon-check disablet"}>
-                        <img onClick={() => {
-                            setModalShow({show: true, status: "blocked"});
-                            if (item.is_block) {
-                                setReason(item.reason)
-                            }
-                            setDriverId(item.id)
-                        }} src="./images/admin/block.png" alt="block"/>
+    const delDriver = (id) => {
+        setLoader(true)
+        const isConfirmed = window.confirm("Rostdan ham ushbu haydovchini o‘chirmoqchimisiz?");
+        if (isConfirmed) {
+            axios.delete(`${value.url}/dashboard/driver/${id}/`, {
+                headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
+            }).then((response) => {
+                getDrivers()
+            }).catch((error) => {
+                console.log(error);
+            }).finally(() => {
+                setLoader(false);
+            });
+        } else {
+            setLoader(false);
+        }
+    };
 
-                        {item.reason && item.is_block && <div className="reason-block">
-                            <img src="./images/admin/warning.png" alt=""/>
-                            <div className="text">
-                                {item.reason}
-                            </div>
-                        </div>}
+    const filteredDrivers = driversList.filter((item) => {
+        const searchText = getSearchText.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
+        const phoneNumber = item.phone?.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
 
-                    </div>
-                </td>
-                <td>
-                </td>
-                <div className="edit-icon">
+        const matchesSearch = searchText === "" || phoneNumber.includes(searchText);
+        const matchesConfirm = confirmFilter === ""
+            ? true
+            : item.is_confirmed === (confirmFilter === "true");
+        return matchesSearch && matchesConfirm;
+    });
+
+    const pageCount = Math.ceil(filteredDrivers.length / worksPage);
+
+    const productList = filteredDrivers.slice(pagesVisited, pagesVisited + worksPage).map((item, index) => {
+        return <tr key={index}>
+            <td>{index + 1}</td>
+            <td className="driver-wrapper">
+                <div className="icon-driver">
                     <img onClick={() => {
-                        setModalShow({show: true, status: "edit-driver"});
-                        editInfo(item.id)
-                    }} src="./images/admin/edit-tools.png" alt=""/>
+                        setModalShow({show: true, status: "driver-photo"});
+                        setDriverPhoto(item.profile_image)
+                    }} src={item.profile_image} alt=""/>
                 </div>
-            </tr>
-        });
+                <div className="text-driver">
+                    <div className="name">
+                        {item.user_name && item.user_name}
+                    </div>
+                    <div className="phone">
+                        {item.phone && item.phone}
+                    </div>
+                </div>
+            </td>
+            <td>
+                {item.created_at}
+            </td>
+            <td>
+                {item.from_region && item.from_region.translations[i18next.language].name}
+                --
+                {item.to_region && item.to_region.translations[i18next.language].name}
+            </td>
+            <td>
+                {item.car_color && item.car_color.translations[i18next.language].name}&nbsp;
+                {item.car_make && item.car_make.translations[i18next.language].name} &nbsp;
+                {item.car_model && item.car_model.translations[i18next.language].name}
+            </td>
+            <td>
+                {item.car_number && item.car_number}
+            </td>
+            <td>
+                <div className="icon">
+                    <img onClick={() => getInformation(item.id)} src="./images/admin/sport-car.png" alt=""/>
+                </div>
+            </td>
+            <td>
+                <div className="icon">
+                    <img onClick={() => getCarImages(item.id)} src="./images/admin/car-photo.png" alt=""/>
+                </div>
+            </td>
+            <td>
+                <div className="icon">
+                    <img onClick={() => getDocsImages(item.id)} src="./images/admin/document.png" alt=""/>
+                </div>
+            </td>
+            <td>
+                <div className={item.is_confirmed ? "icon-check" : "icon-check disablet"}>
+                    <img onClick={() => {
+                        setModalShow({show: true, status: "driver-service"});
+                        setDriverId(item.id)
+                        setCarServiceId(item.available_services)
+                        setCarCategoriesId(item.available_categories)
+                    }} src="./images/admin/check.png" alt=""/>
+                </div>
+            </td>
+            <td>
+                <div className={item.is_block ? "icon-check" : "icon-check disablet"}>
+                    <img onClick={() => {
+                        setModalShow({show: true, status: "blocked"});
+                        if (item.is_block) {
+                            setReason(item.reason)
+                        }
+                        setDriverId(item.id)
+                    }} src="./images/admin/block.png" alt="block"/>
+
+                    {item.reason && item.is_block && <div className="reason-block">
+                        <img src="./images/admin/warning.png" alt=""/>
+                        <div className="text">
+                            {item.reason}
+                        </div>
+                    </div>}
+
+                </div>
+            </td>
+            <td>
+                <div className="icon">
+                    <img onClick={() => delDriver(item.id)} src="./images/admin/delete.png" alt=""/>
+                </div>
+            </td>
+            <td>
+            </td>
+            <div className="edit-icon">
+                <img onClick={() => {
+                    setModalShow({show: true, status: "edit-driver"});
+                    editInfo(item.id)
+                }} src="./images/admin/edit-tools.png" alt=""/>
+            </div>
+        </tr>
+    });
 
     return <div className="drivers-container">
         <CSSTransition
@@ -931,7 +969,10 @@ const Drivers = () => {
                                     <div className="info">
                                         <div className="title">Jinsi:</div>
                                         <div
-                                            className="text">{carInformation.user && carInformation.user.gender === "male" ? "Erkak" : "Ayol"}</div>
+                                            className="text">
+                                            {carInformation.user && carInformation.user.gender === "male" && "Erkak"}
+                                            {carInformation.user && carInformation.user.gender === "female" && "Ayol"}
+                                        </div>
                                     </div>
                                     <div className="info">
                                         <div className="title">Reyting:</div>
@@ -1013,7 +1054,7 @@ const Drivers = () => {
                                 />
                             </div>
 
-                            <div className="title">Haydovchi qo'shish</div>
+                            <div className="title">Haydovchi malumotlarini tahrirlash</div>
 
                             <div className="title-form">Haydovchi ma'lumotlari:</div>
 
@@ -1078,8 +1119,8 @@ const Drivers = () => {
                                                  className={`of ${luggage === "male" ? "on" : ""}`}>
                                                 Erkak
                                             </div>
-                                            <div onClick={() => setLuggage("famale")}
-                                                 className={`of ${luggage === "famale" ? "on" : ""}`}>
+                                            <div onClick={() => setLuggage("female")}
+                                                 className={`of ${luggage === "female" ? "on" : ""}`}>
                                                 Ayol
                                             </div>
                                         </div>
@@ -1365,7 +1406,10 @@ const Drivers = () => {
                             <div className="form-wrapper">
                                 {base_car_images.map((image, index) => (
                                     <div key={index} className="photo">
-                                        <img src={image.image} alt={`car-${index}`}/>
+                                        <img onClick={() => {
+                                            setCurrentImage(image.image);
+                                            setTimeout(() => setIsOpen(true), 100);
+                                        }} src={image.image} alt={`car-${index}`}/>
                                         <div className="del-icon" onClick={() => handleDeleteImageBase(image.id)}>
                                             <img src="./images/admin/delete.png" alt="delete"/>
                                         </div>
@@ -1373,13 +1417,15 @@ const Drivers = () => {
                                 ))}
                                 {car_images.map((image, index) => (
                                     <div key={index} className="photo">
-                                        <img src={image.preview} alt={`car-${index}`}/>
+                                        <img onClick={() => {
+                                            setCurrentImage(image.preview);
+                                            setTimeout(() => setIsOpen(true), 100);
+                                        }} src={image.preview} alt={`car-${index}`}/>
                                         <div className="del-icon" onClick={() => handleDeleteImage(index)}>
                                             <img src="./images/admin/delete.png" alt="delete"/>
                                         </div>
                                     </div>
                                 ))}
-
                                 <div className="add-icon">
                                     <input onChange={handleAddImage} type="file"/>
                                     <img src="./images/admin/image.png" alt=""/>
@@ -1405,7 +1451,10 @@ const Drivers = () => {
                             <div className="form-wrapper">
                                 {base_doc_images.map((image, index) => (
                                     <div key={index} className="photo">
-                                        <img src={image.image} alt={`car-${index}`}/>
+                                        <img onClick={() => {
+                                            setCurrentImage(image.image);
+                                            setTimeout(() => setIsOpen(true), 100);
+                                        }} src={image.image} alt={`car-${index}`}/>
                                         <div className="del-icon" onClick={() => handleDeleteImageDocsBase(image.id)}>
                                             <img src="./images/admin/delete.png" alt="delete"/>
                                         </div>
@@ -1413,7 +1462,10 @@ const Drivers = () => {
                                 ))}
                                 {doc_images.map((image, index) => (
                                     <div key={index} className="photo">
-                                        <img src={image.preview} alt={`car-${index}`}/>
+                                        <img onClick={() => {
+                                            setCurrentImage(image.preview);
+                                            setTimeout(() => setIsOpen(true), 100);
+                                        }} src={image.preview} alt={`car-${index}`}/>
                                         <div className="del-icon" onClick={() => handleDeleteImageDocs(index)}>
                                             <img src="./images/admin/delete.png" alt="delete"/>
                                         </div>
@@ -1430,18 +1482,41 @@ const Drivers = () => {
                             </div>
                         </div>
                     )}
-
-
                 </div>
             </div>
         </CSSTransition>
 
-        <div className="header">
+        {isOpen && (
+            <Lightbox
+                mainSrc={currentImage}
+                onCloseRequest={() => setIsOpen(false)}
+            />
+        )}
 
-            <div className="search-box">
-                <img src="./images/admin/search.png" alt=""/>
-                <input onChange={(e) => setGetSearchText(e.target.value)} placeholder="Telefon raqam kiriting"
-                       type="text"/>
+        <div className="header">
+            <div className="left-side">
+                <div className="search-box">
+                    <img src="./images/admin/search.png" alt=""/>
+                    <input onChange={(e) => setGetSearchText(e.target.value)} placeholder="Telefon raqam kiriting"
+                           type="text"/>
+                </div>
+
+                <div className="select-sides">
+                    <FormControl sx={{m: 1, minWidth: "100%"}} size="small" className="selectMui">
+                        <InputLabel id="confirm-filter-label">Holat</InputLabel>
+                        <Select
+                            labelId="confirm-filter-label"
+                            id="confirm-filter"
+                            value={confirmFilter}
+                            label="Holat"
+                            onChange={(e) => setConfirmFilter(e.target.value)}
+                        >
+                            <MenuItem value="">Barchasi</MenuItem>
+                            <MenuItem value="true">Tasdiqlangan</MenuItem>
+                            <MenuItem value="false">Tasdiqlanmagan</MenuItem>
+                        </Select>
+                    </FormControl>
+                </div>
             </div>
 
             <div onClick={() => {
@@ -1449,7 +1524,6 @@ const Drivers = () => {
             }} className="add-driver-btn">
                 Haydovchi qo'shish
             </div>
-
         </div>
 
         {loader ? <LoaderAdmin/> : <div className="table-wrapper">
@@ -1458,6 +1532,7 @@ const Drivers = () => {
                 <tr>
                     <th>№</th>
                     <th>Haydovchi haqida</th>
+                    <th>Ro'yxatdan o'tgan sanasi</th>
                     <th>Yo'nalish</th>
                     <th>Mashina</th>
                     <th>Mashina raqami</th>
@@ -1466,6 +1541,7 @@ const Drivers = () => {
                     <th>Dokument rasmlari</th>
                     <th>Tasdiqlash</th>
                     <th>Bloklash</th>
+                    <th>O'chirish</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -1474,7 +1550,6 @@ const Drivers = () => {
                 </tbody>
             </table>
         </div>}
-
 
         <div className="pagination">
             {driversList.length > 100 ? <ReactPaginate

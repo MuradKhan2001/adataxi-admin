@@ -3,8 +3,10 @@ import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {MyContext} from "../../App/App";
 import i18next from "i18next";
+import {useTranslation} from "react-i18next";
 
 const CarBrand = () => {
+    const {t} = useTranslation();
     let value = useContext(MyContext);
     const [colorsList, setColorsList] = useState([])
     const [edit, setEdit] = useState(false)
@@ -17,7 +19,7 @@ const CarBrand = () => {
         })
 
     const getData = () => {
-        axios.get(`${value.url}/dashboard/carmake/`,{
+        axios.get(`${value.url}/dashboard/carmake/`, {
             headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
         }).then((response) => {
             setColorsList(response.data);
@@ -34,7 +36,7 @@ const CarBrand = () => {
         const isAnyNameFilled = name_uz.trim() && name_ru.trim() && name_en.trim();
 
         if (!isAnyNameFilled) {
-            alert("Iltimos, rang nomini kiriting");
+            alert("Iltimos, brend nomini kiriting");
             return;
         }
 
@@ -51,7 +53,7 @@ const CarBrand = () => {
         };
 
         if (status === "add") {
-            axios.post(`${value.url}dashboard/carmake/`, {translations: translation_list},
+            axios.post(`${value.url}/dashboard/carmake/`, {translations: translation_list},
                 {
                     headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
                 })
@@ -60,7 +62,7 @@ const CarBrand = () => {
                     getData();
                 })
                 .catch((error) => {
-                    console.error("Rang qo'shishda xatolik:", error);
+                    console.error("Brend qo'shishda xatolik:", error);
                 });
         }
 
@@ -75,13 +77,13 @@ const CarBrand = () => {
                     setEdit(false);
                 })
                 .catch((error) => {
-                    console.error("Rangni tahrirlashda xatolik:", error);
+                    console.error("Brendni tahrirlashda xatolik:", error);
                 });
         }
     };
 
     const delColor = (id) => {
-        axios.delete(`${value.url}dashboard/carmake/${id}/`,{
+        axios.delete(`${value.url}/dashboard/carmake/${id}/`, {
             headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
         }).then((response) => {
             setTranslations({name_uz: "", name_ru: "", name_en: ""});

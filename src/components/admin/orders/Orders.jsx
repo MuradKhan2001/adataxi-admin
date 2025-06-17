@@ -1,13 +1,14 @@
-import {useEffect, useRef, useState, useMemo, useContext} from "react";
-import ReactPaginate from "react-paginate";
+import {useEffect, useRef, useState, useContext} from "react";
 import "./style.scss"
 import {CSSTransition} from "react-transition-group";
 import axios from "axios";
 import {MyContext} from "../../App/App";
 import i18next from "i18next";
 import LoaderAdmin from "../loader-admin/LoaderAdmin";
+import {useTranslation} from "react-i18next";
 
 const Orders = () => {
+    const {t} = useTranslation();
     let value = useContext(MyContext);
     const [modalShow, setModalShow] = useState({show: false, status: false});
     const nodeRef = useRef(null);
@@ -103,6 +104,7 @@ const Orders = () => {
             })
             .then((response) => {
                 getList()
+                setModalShow({status: "", show: false})
             })
     }
 
@@ -133,7 +135,6 @@ const Orders = () => {
                 <div ref={nodeRef} className="modal-card">
 
                     {modalShow.status === "car-information" && (
-
                         <div className="car-information">
                             <div className="cancel-btn">
                                 <img

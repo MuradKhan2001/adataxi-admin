@@ -20,37 +20,35 @@ const Balance = () => {
             },
         }).then((response) => {
             setDriversList(response.data);
+            console.log(response.data);
         })
     }, []);
 
     const productList = driversList.slice(pagesVisited, pagesVisited + worksPage)
         .filter((item) => {
             const searchText = getSearchText.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
-            const phoneNumber = item.driver.phone.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
+            const phoneNumber = item.driver_phone.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
             return searchText === "" || phoneNumber.includes(searchText);
         }).map((item, index) => {
-        return <tr key={index}>
-            <td>{index+1}</td>
-            <td className="driver-wrapper">
-                <div className="text-driver">
-                    <div
-                        className="name">{item.driver && item.driver.first_name} {item.driver && item.driver.last_name}</div>
-                    <div className="phone">
-                        {item.driver && item.driver.phone}
+            return <tr key={index}>
+                <td>{index + 1}</td>
+                <td className="driver-wrapper">
+                    <div className="text-driver">
+                        <div
+                            className="name">{item.driver_name}</div>
+                        <div className="phone">
+                            {item.driver_phone}
+                        </div>
                     </div>
-                </div>
-            </td>
-            <td>
-                {item.driver && item.driver.car_number}
-            </td>
-            <td>
-                {item.id_number}
-            </td>
-            <td>
-                {item.fund}
-            </td>
-        </tr>
-    });
+                </td>
+                <td>
+                    {item.id_number}
+                </td>
+                <td>
+                    {item.fund}
+                </td>
+            </tr>
+        });
 
     const pageCount = Math.ceil(driversList.length / worksPage);
 
@@ -66,7 +64,8 @@ const Balance = () => {
         <div className="header">
             <div className="search-box">
                 <img src="./images/admin/search.png" alt=""/>
-                <input onChange={(e) => setGetSearchText(e.target.value)} placeholder="Telefon raqam kiriting" type="text"/>
+                <input onChange={(e) => setGetSearchText(e.target.value)} placeholder="Telefon raqam kiriting"
+                       type="text"/>
             </div>
         </div>
 
@@ -76,10 +75,8 @@ const Balance = () => {
                 <tr>
                     <th>№</th>
                     <th>Haydovchi</th>
-                    <th>Avtomobil raqami</th>
                     <th>Id raqam</th>
                     <th>Narx</th>
-
                 </tr>
                 </thead>
 
