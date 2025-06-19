@@ -158,7 +158,6 @@ const Clients = () => {
         }
     }
 
-
     const productList = driversList.slice(pagesVisited, pagesVisited + worksPage)
         .filter((item) => {
             const searchText = getSearchText.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
@@ -207,6 +206,11 @@ const Clients = () => {
                     </div>
                 </td>
                 <td>
+                    <div className="icon">
+                        <img onClick={() => delDriver(item.id)} src="./images/admin/delete.png" alt=""/>
+                    </div>
+                </td>
+                <td>
                 </td>
                 <div className="edit-icon">
                     <img onClick={() => {
@@ -216,6 +220,24 @@ const Clients = () => {
                 </div>
             </tr>
         });
+
+    const delDriver = (id) => {
+        setLoader(true)
+        const isConfirmed = window.confirm("Rostdan ham ushbu mijozni o‘chirmoqchimisiz?");
+        if (isConfirmed) {
+            axios.delete(`${value.url}/dashboard/client/${id}/`, {
+                headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
+            }).then((response) => {
+                getDrivers()
+            }).catch((error) => {
+                console.log(error);
+            }).finally(() => {
+                setLoader(false);
+            });
+        } else {
+            setLoader(false);
+        }
+    };
 
     return <div className="clients-container">
         <CSSTransition
@@ -479,6 +501,7 @@ const Clients = () => {
                     <th>Telefon raqam</th>
                     <th>Jinsi</th>
                     <th>Bloklash</th>
+                    <th>O'chirish</th>
                     <th></th>
                 </tr>
                 </thead>

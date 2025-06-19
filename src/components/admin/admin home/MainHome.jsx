@@ -1,6 +1,6 @@
 import "./adminHome.scss"
-import {useEffect, useMemo, useState, createContext} from "react"
-import {GoogleMap, useLoadScript, MarkerF} from "@react-google-maps/api";
+import {useEffect, useMemo, useState} from "react"
+import {GoogleMap, useLoadScript, MarkerF, InfoWindow} from "@react-google-maps/api";
 import Loader from "./loader/Loader";
 import axios from "axios";
 import {w3cwebsocket as W3CWebSocket} from "websocket";
@@ -16,9 +16,8 @@ const MainHome = () => {
     useEffect(() => {
         if (!localStorage.getItem("token")) return;
 
-        const websocket = new W3CWebSocket(`wss://api.adataxi.uz/ws/client/?token=${localStorage.getItem("token")}`);
+        const websocket = new W3CWebSocket(`wss://api.adataxi.uz/ws/driver/?token=${localStorage.getItem("token")}`);
         setSockedContext(websocket);
-
     }, []);
 
     useEffect(() => {
@@ -44,10 +43,16 @@ const MainHome = () => {
                 window.location.pathname = "/";
                 return;
             }
+
             if (data.action === "driver_location") {
                 setLocationsList(data.message)
             }
+
+            console.log(data)
+
         };
+
+
     }, [sockedContext]);
 
     const {isLoaded} = useLoadScript({
@@ -59,6 +64,16 @@ const MainHome = () => {
             disableDefaultUI: false,
             clickableIcons: false
         }), []);
+
+    const [selectedLocation, setSelectedLocation] = useState(null);
+
+    const onMarkerClick = (location) => {
+        setSelectedLocation(location);
+    };
+
+    const onCloseClick = () => {
+        setSelectedLocation(null);
+    };
 
     if (!isLoaded) return <Loader/>;
 
@@ -85,7 +100,7 @@ const MainHome = () => {
                 <div className="icon">
                     <img src="./images/admin/handshake.png" alt=""/>
                 </div>
-                <div className="title">Hamkorlar soni:</div>
+                <div className="title">To'liq ro'yxatdan o'tgan haydovchilar:</div>
                 <div className="count">{statisitc.avilable_drivers}</div>
             </div>
             <div className="statistic-card">
@@ -104,11 +119,35 @@ const MainHome = () => {
                 options={options}
                 mapContainerClassName="map-container">
 
-                {locationsList.latitude && locationsList.longitude && (
+                {locationsList.map((item, index) => (
                     <MarkerF
-                        position={{lat: locationsList.latitude, lng: locationsList.longitude}}
+                        key={index}
+                        position={{lat: item.latitude, lng: item.longitude}}
                         icon={icon}
-                    />)}
+                        onClick={() => onMarkerClick(item)}
+                    />
+                ))}
+
+                {selectedLocation && (
+                    <InfoWindow
+                        position={{
+                            lat: Number(selectedLocation.latitude),
+                            lng: Number(selectedLocation.longitude)
+                        }}
+                        onCloseClick={onCloseClick}
+                    >
+                        <div className="info-box">
+                            <div className="info-text">
+                                <span>Moshina raqam:</span>
+                                {selectedLocation.car_number} <br/>
+                                <span>Tel raqam:</span>
+                                {selectedLocation.phone_number}
+                            </div>
+                        </div>
+                    </InfoWindow>
+                )}
+
+
 
             </GoogleMap>
         </div>

@@ -27,7 +27,7 @@ const Balance = () => {
     const productList = driversList.slice(pagesVisited, pagesVisited + worksPage)
         .filter((item) => {
             const searchText = getSearchText.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
-            const phoneNumber = item.driver_phone.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
+            const phoneNumber = item.driver_phone?.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
             return searchText === "" || phoneNumber.includes(searchText);
         }).map((item, index) => {
             return <tr key={index}>
