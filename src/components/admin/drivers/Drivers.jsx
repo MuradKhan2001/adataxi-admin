@@ -57,6 +57,9 @@ const Drivers = () => {
     const [car_categories, setCar_categories] = useState([]);
     const [car_service, setCar_service] = useState([]);
 
+    const [from, setFrom] = useState("");
+    const [to, setTo] = useState("");
+
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const MenuProps = {
@@ -364,7 +367,6 @@ const Drivers = () => {
             driver, {
                 headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
             }).then((response) => {
-            getDrivers()
             setModalShow({status: "", show: false})
         })
 
@@ -521,15 +523,22 @@ const Drivers = () => {
         const phoneNumber = item.phone?.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
 
         const matchesSearch = searchText === "" || phoneNumber.includes(searchText);
-        const matchesConfirm = confirmFilter === ""
-            ? true
-            : item.is_confirmed === (confirmFilter === "true");
-        return matchesSearch && matchesConfirm;
+        const matchesConfirm = confirmFilter === "" ? true : item.is_confirmed === (confirmFilter === "true");
+
+        const matchesFrom =
+            from === "" || (item.from_region?.id && item.from_region.id.toString() === from.toString());
+
+        const matchesTo =
+            to === "" || (item.to_region?.id && item.to_region.id.toString() === to.toString());
+
+        return matchesSearch && matchesConfirm && matchesFrom && matchesTo;
     });
+
 
     const pageCount = Math.ceil(filteredDrivers.length / worksPage);
 
     const productList = filteredDrivers.slice(pagesVisited, pagesVisited + worksPage).map((item, index) => {
+
         return <tr key={index}>
             <td>{index + 1}</td>
             <td className="driver-wrapper">
@@ -1519,10 +1528,64 @@ const Drivers = () => {
                 </div>
             </div>
 
-            <div onClick={() => {
-                setModalShow({show: true, status: "add-driver"});
-            }} className="add-driver-btn">
-                Haydovchi qo'shish
+            <div className="filter-wrapper">
+                <div className="select-sides">
+                    <FormControl sx={{m: 1, minWidth: "100%"}} size="small" className="selectMui">
+                        <InputLabel id="demo-select-large-label">Qayerdan</InputLabel>
+                        <Select
+                            labelid="demo-select-small-label"
+                            id="demo-select-small"
+                            value={from}
+                            label="Qayerdan"
+                            name="from"
+                            onChange={(e) => setFrom(e.target.value)}
+                        >
+                            {
+                                regions.map((item, index) => {
+                                    return <MenuItem key={index}
+                                                     value={item.id}>
+                                        {item.translations[i18next.language].name}
+                                    </MenuItem>
+                                })
+                            }
+                        </Select>
+                    </FormControl>
+                </div>
+
+                <div className="select-sides">
+                    <FormControl sx={{m: 1, minWidth: "100%"}} size="small" className="selectMui">
+                        <InputLabel id="demo-select-large-label">Qayerga</InputLabel>
+                        <Select
+                            labelid="demo-select-small-label"
+                            id="demo-select-small"
+                            value={to}
+                            label="Qayerga"
+                            name="to"
+                            onChange={(e) => setTo(e.target.value)}
+                        >
+                            {
+                                regions.map((item, index) => {
+                                    return <MenuItem key={index}
+                                                     value={item.id}>
+                                        {item.translations[i18next.language].name}
+                                    </MenuItem>
+                                })
+                            }
+                        </Select>
+                    </FormControl>
+                </div>
+            </div>
+
+            <div className="rigt-side">
+                <div className="update-driver">
+                    <img onClick={getDrivers} src="./images/admin/changes.png" alt="changes"/>
+                </div>
+
+                <div onClick={() => {
+                    setModalShow({show: true, status: "add-driver"});
+                }} className="add-driver-btn">
+                    Haydovchi qo'shish
+                </div>
             </div>
         </div>
 

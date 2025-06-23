@@ -1162,19 +1162,86 @@
       }
     }
 
-    .add-driver-btn {
-      padding: 10px 35px;
-      border-radius: 7px;
-      background-color: #00C389;
-      color: white;
-      width: max-content;
-      cursor: pointer;
-      transition: 0.3s;
+    .filter-wrapper{
+      display: flex;
+      .select-sides {
+        width: 200px;
+        margin-right: 10px;
 
-      &:hover {
-        background-color: #019166;
+        .selectMui {
+          .MuiOutlinedInput-root {
+            &:hover {
+              .MuiOutlinedInput-notchedOutline {
+                border: 1px solid rgba(0, 173, 173, 1);
+              }
+            }
+          }
+
+          .MuiOutlinedInput-root.Mui-focused {
+            .MuiOutlinedInput-notchedOutline {
+              border: 1px solid rgba(0, 173, 173, 1);
+            }
+          }
+
+          .MuiInputLabel-root.Mui-focused {
+            color: rgba(0, 173, 173, 1);
+          }
+        }
+
+        .title-on {
+          color: rgb(135, 135, 135);
+          font-size: 14px;
+          font-weight: 400;
+        }
+
+        .textField {
+          .MuiOutlinedInput-root {
+            &:hover {
+              .MuiOutlinedInput-notchedOutline {
+                border: 1px solid #00c389;
+              }
+            }
+          }
+
+          .MuiOutlinedInput-root.Mui-focused {
+            .MuiOutlinedInput-notchedOutline {
+              border: 1px solid #00c389;
+            }
+          }
+
+          .MuiInputLabel-root.Mui-focused {
+            color: #00c389;
+          }
+        }
       }
     }
+
+    .rigt-side {
+      display: flex;
+
+      .update-driver {
+        margin-right: 10px;
+        img {
+          width: 40px;
+          cursor: pointer;
+        }
+      }
+
+      .add-driver-btn {
+        padding: 10px 35px;
+        border-radius: 7px;
+        background-color: #00C389;
+        color: white;
+        width: max-content;
+        cursor: pointer;
+        transition: 0.3s;
+
+        &:hover {
+          background-color: #019166;
+        }
+      }
+    }
+
   }
 
   .table-wrapper {

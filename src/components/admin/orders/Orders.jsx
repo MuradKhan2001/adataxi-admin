@@ -500,11 +500,11 @@ const Orders = () => {
                                 <td>
                                     <div className="text-driver">
                                         <div className="name">
-                                            {item.client.first_name} &nbsp;
-                                            {item.client.last_name}
+                                            {item.client?.first_name} &nbsp;
+                                            {item.client?.last_name}
                                         </div>
                                         <div className="phone">
-                                            {item.client.phone}
+                                            {item.client?.phone}
                                         </div>
                                     </div>
                                 </td>
