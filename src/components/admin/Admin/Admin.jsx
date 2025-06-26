@@ -17,7 +17,7 @@ const Admin = () => {
     const menues = [
         {
             name: "Dashboard",
-            url: "/",
+            url: "/dashboard",
             img: "../images/admin/dashboard.png"
         },
         {

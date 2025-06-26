@@ -20,7 +20,7 @@ const LoginAdmin = () => {
             axios.post(`${value.url}/dashboard/login/`, user).then((response) => {
                 localStorage.setItem("admin", response.data.user)
                 localStorage.setItem("token", response.data.token);
-                window.location.pathname = '/';
+                window.location.pathname = '/dashboard';
                 localStorage.setItem("lng", "uz")
             }).catch((error) => {
                 if (error.response.status === 404) alert("Bu foydalanuvchi topilmadi");
@@ -38,8 +38,13 @@ const LoginAdmin = () => {
     useOnKeyPress(HandleLogin, 'Enter');
     useOnKeyPress(Clear, 'Delete');
 
-    return <div className="login-container">
+    useEffect(() => {
+        if (localStorage.getItem("admin") && localStorage.getItem("token")) {
+            navigate('/dashboard');
+        }
+    })
 
+    return <div className="login-container">
         <div className="login-card">
             <div className="logo">
                 <img src="./images/logo.png" alt=""/>

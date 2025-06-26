@@ -16,22 +16,20 @@ import RejectReason from "./components/admin/reject-reason/RejectReason";
 import ExtraServices from "./components/admin/extra-services/ExtraServices";
 import Price from "./components/admin/price/Price";
 
-export const publicRoutes = [
-    {
-        path: "/",
-        element: <LoginAdmin/>
-    }];
-
 export const adminRoutes = [
     {
         path: "/*",
         element: <Admin/>
     },
+    {
+        path: "/",
+        element: <LoginAdmin/>
+    }
 ];
 
 export const adminPageRoutes = [
     {
-        path: "/",
+        path: "/dashboard",
         element: <MainHome/>
     },
     {
