@@ -1,7 +1,6 @@
 import {useEffect, useRef, useState, useContext} from "react";
 import {CSSTransition} from "react-transition-group";
 import {useFormik} from "formik";
-import ReactPaginate from "react-paginate";
 import axios from "axios";
 import {TextField} from "@mui/material";
 import "./style.scss"
@@ -14,7 +13,6 @@ const Clients = () => {
     let value = useContext(MyContext);
     const [modalShow, setModalShow] = useState({show: false, status: false});
     const nodeRef = useRef(null);
-    const ref = useRef(null);
     const [luggage, setLuggage] = useState("male");
     const [getSearchText, setGetSearchText] = useState("");
     const [driverPhoto, setDriverPhoto] = useState(null);
@@ -24,10 +22,31 @@ const Clients = () => {
     const [profileImage, setProfileImage] = useState(null);
     const [loader, setLoader] = useState(false);
 
-    const worksPage = 100;
-    const [pageNumber, setPageNumber] = useState(0);
-    const pagesVisited = pageNumber * worksPage;
-    const pageCount = Math.ceil(driversList.length / worksPage);
+    const [links, setLinks] = useState({});
+    const [Pages, setPages] = useState([]);
+    const [activeItem, setActiveItem] = useState(1);
+    const visiblePages = [];
+    const totalPages = Pages.length;
+
+    if (totalPages <= 7) {
+        visiblePages.push(...Pages.map((_, index) => index + 1));
+    } else {
+        visiblePages.push(1);
+
+        if (activeItem > 3) {
+            visiblePages.push("...");
+        }
+
+        for (let i = Math.max(2, activeItem - 1); i <= Math.min(totalPages - 1, activeItem + 1); i++) {
+            visiblePages.push(i);
+        }
+
+        if (activeItem < totalPages - 2) {
+            visiblePages.push("...");
+        }
+
+        visiblePages.push(totalPages);
+    }
 
     const validate = (values) => {
         const errors = {};
@@ -59,26 +78,25 @@ const Clients = () => {
     });
 
     useEffect(() => {
-        getDrivers()
+        getList()
     }, []);
 
-    const getDrivers = () => {
+    const getList = (url = null, page = 1) => {
         setLoader(true);
-        axios.get(`${value.url}/dashboard/client/`, {
-            headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
+        const main = url ? url : `${value.url}/dashboard/client/?page=${page}`;
+        axios.get(main, {
+            headers: {
+                "Authorization": `Token ${localStorage.getItem("token")}`
+            }
         }).then((response) => {
-            setDriversList(response.data);
+            setDriversList(response.data.results);
+            setLinks(response.data.links);
+            setPages(response.data.links.pages);
+            setActiveItem(page);
         }).finally(() => {
             setLoader(false);
         });
-    }
 
-    const changePage = ({selected}) => {
-        setPageNumber(selected)
-
-        setTimeout(() => {
-            ref.current?.scrollIntoView({behavior: "smooth"});
-        }, 500);
     };
 
     const getInputPhoto = (event) => {
@@ -108,7 +126,7 @@ const Clients = () => {
                     headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
                 }).then((response) => {
                 setModalShow({status: "", show: false})
-                getDrivers()
+                getList(null, activeItem)
                 formik.resetForm();
             })
         }
@@ -119,7 +137,7 @@ const Clients = () => {
                     headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
                 }).then((response) => {
                 setModalShow({status: "", show: false})
-                getDrivers()
+                getList(null, activeItem)
                 formik.resetForm();
             })
         }
@@ -142,7 +160,7 @@ const Clients = () => {
                     headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
                 }).then((response) => {
                 setModalShow({status: "", show: false})
-                getDrivers()
+                getList(null, activeItem)
                 setReason("")
             })
         } else alert("Bloklash sababini kiriting!")
@@ -153,73 +171,10 @@ const Clients = () => {
                     headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
                 }).then((response) => {
                 setModalShow({status: "", show: false})
-                getDrivers()
+                getList(null, activeItem)
             })
         }
     }
-
-    const productList = driversList.slice(pagesVisited, pagesVisited + worksPage)
-        .filter((item) => {
-            const searchText = getSearchText.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
-            const phoneNumber = item.phone.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
-            return searchText === "" || phoneNumber.includes(searchText);
-        }).map((item, index) => {
-            return <tr key={index}>
-                <td>{index + 1}</td>
-                <td className="driver-wrapper">
-                    <div className="icon-driver">
-                        <img onClick={() => {
-                            setModalShow({show: true, status: "driver-photo"});
-                            setDriverPhoto(item.profile_image)
-                        }} src={item.profile_image} alt=""/>
-                    </div>
-                    <div className="text-driver">
-                        <div className="name">
-                            {item.first_name} &nbsp;
-                            {item.last_name}
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    {item.phone}
-                </td>
-                <td>
-                    {item.gender}
-                </td>
-                <td>
-                    <div className={item.is_block ? "icon-check" : "icon-check disablet"}>
-                        <img onClick={() => {
-                            setModalShow({show: true, status: "blocked"});
-                            if (item.is_block) {
-                                setReason(item.reason)
-                            }
-                            setDriverId(item.id)
-                        }} src="./images/admin/block.png" alt="block"/>
-
-                        {item.reason && item.is_block && <div className="reason-block">
-                            <img src="./images/admin/warning.png" alt=""/>
-                            <div className="text">
-                                {item.reason}
-                            </div>
-                        </div>}
-
-                    </div>
-                </td>
-                <td>
-                    <div className="icon">
-                        <img onClick={() => delDriver(item.id)} src="./images/admin/delete.png" alt=""/>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <div className="edit-icon">
-                    <img onClick={() => {
-                        setModalShow({show: true, status: "edit-driver"});
-                        editInfo(item)
-                    }} src="./images/admin/edit-tools.png" alt=""/>
-                </div>
-            </tr>
-        });
 
     const delDriver = (id) => {
         setLoader(true)
@@ -228,7 +183,7 @@ const Clients = () => {
             axios.delete(`${value.url}/dashboard/client/${id}/`, {
                 headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
             }).then((response) => {
-                getDrivers()
+                getList(null, activeItem)
             }).catch((error) => {
                 console.log(error);
             }).finally(() => {
@@ -238,6 +193,21 @@ const Clients = () => {
             setLoader(false);
         }
     };
+
+    const filterData = () => {
+        setLoader(true);
+        let page = 1
+        axios.get(`${value.url}/dashboard/client/?phone=${getSearchText}`, {
+            headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
+        }).then((response) => {
+            setDriversList(response.data.results);
+            setLinks(response.data.links);
+            setPages(response.data.links.pages);
+            setActiveItem(page);
+        }).finally(() => {
+            setLoader(false);
+        });
+    }
 
     return <div className="clients-container">
         <CSSTransition
@@ -478,11 +448,21 @@ const Clients = () => {
         </CSSTransition>
 
         <div className="header">
-            <div className="search-box">
-                <img src="./images/admin/find-person.png" alt=""/>
-                <input onChange={(e) => setGetSearchText(e.target.value)} placeholder="Telefon raqam kiriting"
-                       type="text"/>
+            <div className="left-side">
+                <div className="search-box">
+                    <img src="./images/admin/find-person.png" alt=""/>
+                    <input value={getSearchText} onChange={(e) => setGetSearchText(e.target.value)} placeholder="Telefon raqam kiriting"
+                           type="text"/>
+                    {getSearchText &&
+                        <img style={{cursor: "pointer"}} onClick={() => setGetSearchText("")} src="./images/close.png"
+                             alt="close"/>}
+                </div>
+
+                <div className="update-driver">
+                    <img onClick={filterData} src="./images/admin/panel.png" alt="changes"/>
+                </div>
             </div>
+
 
             <div onClick={() => {
                 setModalShow({show: true, status: "add-driver"});
@@ -507,24 +487,99 @@ const Clients = () => {
                 </thead>
 
                 <tbody>
-                {productList}
+                {driversList.map((item, index) => {
+                    return <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td className="driver-wrapper">
+                            <div className="icon-driver">
+                                <img onClick={() => {
+                                    setModalShow({show: true, status: "driver-photo"});
+                                    setDriverPhoto(item.profile_image)
+                                }} src={item.profile_image} alt=""/>
+                            </div>
+                            <div className="text-driver">
+                                <div className="name">
+                                    {item.first_name} &nbsp;
+                                    {item.last_name}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {item.phone}
+                        </td>
+                        <td>
+                            {item.gender}
+                        </td>
+                        <td>
+                            <div className={item.is_block ? "icon-check" : "icon-check disablet"}>
+                                <img onClick={() => {
+                                    setModalShow({show: true, status: "blocked"});
+                                    if (item.is_block) {
+                                        setReason(item.reason)
+                                    }
+                                    setDriverId(item.id)
+                                }} src="./images/admin/block.png" alt="block"/>
+
+                                {item.reason && item.is_block && <div className="reason-block">
+                                    <img src="./images/admin/warning.png" alt=""/>
+                                    <div className="text">
+                                        {item.reason}
+                                    </div>
+                                </div>}
+
+                            </div>
+                        </td>
+                        <td>
+                            <div className="icon">
+                                <img onClick={() => delDriver(item.id)} src="./images/admin/delete.png" alt=""/>
+                            </div>
+                        </td>
+                        <td>
+                        </td>
+                        <div className="edit-icon">
+                            <img onClick={() => {
+                                setModalShow({show: true, status: "edit-driver"});
+                                editInfo(item)
+                            }} src="./images/admin/edit-tools.png" alt=""/>
+                        </div>
+                    </tr>
+                })}
                 </tbody>
             </table>}
         </div>
 
         <div className="pagination">
-            {driversList.length > 100 ? <ReactPaginate
-                breakLabel="..."
-                previousLabel={<img src="./images/admin/prev.png" alt=""/>}
-                nextLabel={<img src="./images/admin/next.png" alt=""/>}
-                pageCount={pageCount}
-                onPageChange={changePage}
-                containerClassName={"paginationBttns"}
-                previousLinkClassName={"previousBttn"}
-                nextLinkClassName={"nextBttn"}
-                disabledCalassName={"paginationDisabled"}
-                activeClassName={"paginationActive"}
-            /> : ""}
+            <div onClick={() => {
+                if (activeItem > 1) {
+                    getList(links.previous, activeItem - 1);
+                }
+            }} className="prev">
+                <img src="./images/admin/prev.png" alt="Prev"/>
+            </div>
+
+            {visiblePages.map((item, index) => (
+                <div key={index}
+                     onClick={() => {
+                         if (item !== "...") {
+                             const pageNumber = item;
+                             const pageObj = Pages.find(item_page => item_page[pageNumber]);
+                             const pageUrl = pageObj ? pageObj[pageNumber] : null;
+                             getList(pageUrl, item);
+                         }
+                     }}
+                     className={`items ${activeItem === item ? "active" : ""} `}
+                     style={{cursor: item === "..." ? "default" : "pointer"}}>
+                    {item}
+                </div>
+            ))}
+
+            <div className="next" onClick={() => {
+                if (activeItem < totalPages) {
+                    getList(links.next, activeItem + 1);
+                }
+            }}>
+                <img src="./images/admin/next.png" alt="Next"/>
+            </div>
         </div>
     </div>
 }

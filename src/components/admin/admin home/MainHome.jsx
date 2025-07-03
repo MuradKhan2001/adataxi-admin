@@ -27,7 +27,6 @@ const MainHome = () => {
             setCenter(locMy);
         });
 
-
         axios.get(`https://api.adataxi.uz/api/v1/site/statistics/`).then((response) => {
             setStatisitc(response.data[0])
         })
@@ -47,12 +46,7 @@ const MainHome = () => {
             if (data.action === "driver_location") {
                 setLocationsList(data.message)
             }
-
-            console.log(data)
-
         };
-
-
     }, [sockedContext]);
 
     const {isLoaded} = useLoadScript({
@@ -107,7 +101,7 @@ const MainHome = () => {
                 <div className="icon">
                     <img src="./images/admin/shopping-list.png" alt=""/>
                 </div>
-                <div className="title">Yakunlangan soni:</div>
+                <div className="title">Yakunlangan buyurtmalar soni:</div>
                 <div className="count">{statisitc.rides}</div>
             </div>
         </div>

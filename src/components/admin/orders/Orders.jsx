@@ -13,10 +13,6 @@ const Orders = () => {
     const [modalShow, setModalShow] = useState({show: false, status: false});
     const nodeRef = useRef(null);
     const [loader, setLoader] = useState(false);
-
-    const [links, setLinks] = useState({});
-    const [Pages, setPages] = useState([]);
-    const [activeItem, setActiveItem] = useState(1);
     const [orderStatus, setOrderStatus] = useState();
     const [orderId, setOrderId] = useState("");
     const [reasonList, setReasonList] = useState([]);
@@ -24,7 +20,6 @@ const Orders = () => {
     const [driversList, setDriversList] = useState([]);
     const [statistics, setStatistics] = useState([]);
     const [information, setInformation] = useState([]);
-
     const [client, setClient] = useState("");
     const [driver, setDriver] = useState("");
     const [status, setStatus] = useState("");
@@ -32,7 +27,9 @@ const Orders = () => {
     const [tarif, setTarif] = useState("");
     const [date, setDate] = useState("");
 
-
+    const [links, setLinks] = useState({});
+    const [Pages, setPages] = useState([]);
+    const [activeItem, setActiveItem] = useState(1);
     const visiblePages = [];
     const totalPages = Pages.length;
 
@@ -72,7 +69,6 @@ const Orders = () => {
         }).then((response) => {
             setStatistics(response.data);
         })
-
     }, []);
 
     const getList = (url = null, page = 1) => {
@@ -467,6 +463,7 @@ const Orders = () => {
                 </div>
             </div>
         </div>
+
         <div className="header">
             <div className="left-side">
 
@@ -580,7 +577,10 @@ const Orders = () => {
                 <div key={index}
                      onClick={() => {
                          if (item !== "...") {
-                             getList(null, item);
+                             const pageNumber = item;
+                             const pageObj = Pages.find(item_page => item_page[pageNumber]);
+                             const pageUrl = pageObj ? pageObj[pageNumber] : null;
+                             getList(pageUrl, item);
                          }
                      }}
                      className={`items ${activeItem === item ? "active" : ""} `}

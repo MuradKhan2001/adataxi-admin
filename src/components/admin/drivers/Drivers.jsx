@@ -1,7 +1,6 @@
 import {useEffect, useRef, useState, useContext} from "react";
 import {CSSTransition} from "react-transition-group";
 import {useFormik} from "formik";
-import ReactPaginate from "react-paginate";
 import i18next from "i18next";
 import axios from "axios";
 import {
@@ -26,7 +25,6 @@ const Drivers = () => {
     let value = useContext(MyContext);
     const [modalShow, setModalShow] = useState({show: false, status: false});
     const nodeRef = useRef(null);
-    const ref = useRef(null);
     const [getSearchText, setGetSearchText] = useState("");
     const [driverPhoto, setDriverPhoto] = useState(null);
     const [carInformation, setCarInformation] = useState([]);
@@ -70,10 +68,6 @@ const Drivers = () => {
             },
         },
     };
-
-    const worksPage = 100;
-    const [pageNumber, setPageNumber] = useState(0);
-    const pagesVisited = pageNumber * worksPage;
 
     const [confirmFilter, setConfirmFilter] = useState("");
     const [isOpen, setIsOpen] = useState(false);
@@ -149,8 +143,52 @@ const Drivers = () => {
         },
     });
 
+    const [Pages, setPages] = useState([]);
+    const [activeItem, setActiveItem] = useState(1);
+    const [links, setLinks] = useState({});
+
+    const visiblePages = [];
+    const totalPages = Pages.length;
+
+    if (totalPages <= 7) {
+        visiblePages.push(...Pages.map((_, index) => index + 1));
+    } else {
+        visiblePages.push(1);
+
+        if (activeItem > 3) {
+            visiblePages.push("...");
+        }
+
+        for (let i = Math.max(2, activeItem - 1); i <= Math.min(totalPages - 1, activeItem + 1); i++) {
+            visiblePages.push(i);
+        }
+
+        if (activeItem < totalPages - 2) {
+            visiblePages.push("...");
+        }
+
+        visiblePages.push(totalPages);
+    }
+
+    const getList = (url = null, page = 1) => {
+        setLoader(true);
+        const main = url ? url : `${value.url}/dashboard/driver/?page=${page}`;
+        axios.get(main, {
+            headers: {
+                "Authorization": `Token ${localStorage.getItem("token")}`
+            }
+        }).then((response) => {
+            setDriversList(response.data.results);
+            setLinks(response.data.links);
+            setPages(response.data.links.pages);
+            setActiveItem(page);
+        }).finally(() => {
+            setLoader(false);
+        });
+    };
+
     useEffect(() => {
-        getDrivers()
+        getList();
         axios.get(`${value.url}/dashboard/carcategory/`, {
             headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
         }).then((response) => {
@@ -189,19 +227,6 @@ const Drivers = () => {
 
     }, []);
 
-    const getDrivers = () => {
-        setLoader(true);
-        axios.get(`${value.url}/dashboard/driver/`, {
-            headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
-        }).then((response) => {
-            setDriversList(response.data);
-        }).catch((error) => {
-            console.log(error);
-        }).finally(() => {
-            setLoader(false);
-        });
-    }
-
     const getCarNames = (id) => {
         axios.get(`${value.url}/dashboard/carmake/${id}/`, {
             headers: {
@@ -211,14 +236,6 @@ const Drivers = () => {
             setCar_model(response.data);
         })
     }
-
-    const changePage = ({selected}) => {
-        setPageNumber(selected)
-
-        setTimeout(() => {
-            ref.current?.scrollIntoView({behavior: "smooth"});
-        }, 500);
-    };
 
     const getInputPhoto = (event) => {
         const file = event.target.files[0];
@@ -272,7 +289,7 @@ const Drivers = () => {
                     headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
                 }).then((response) => {
                 setModalShow({status: "", show: false})
-                getDrivers()
+                getList()
                 formik.resetForm();
             })
         }
@@ -283,7 +300,7 @@ const Drivers = () => {
                     headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
                 }).then((response) => {
                 setModalShow({status: "", show: false})
-                getDrivers()
+                getList(null, activeItem)
                 formik.resetForm();
             })
         }
@@ -324,7 +341,7 @@ const Drivers = () => {
                     headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
                 }).then((response) => {
                 setModalShow({status: "", show: false})
-                getDrivers()
+                getList(null, activeItem)
                 setReason("")
             })
         } else alert("Bloklash sababini kiriting!")
@@ -335,7 +352,7 @@ const Drivers = () => {
                     headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
                 }).then((response) => {
                 setModalShow({status: "", show: false})
-                getDrivers()
+                getList(null, activeItem)
             })
         }
     }
@@ -369,7 +386,6 @@ const Drivers = () => {
             }).then((response) => {
             setModalShow({status: "", show: false})
         })
-
     }
 
     const getInformation = (id) => {
@@ -379,7 +395,6 @@ const Drivers = () => {
             headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
         }).then((response) => {
             setCarInformation(response.data);
-            console.log(response.data)
         })
     }
 
@@ -466,8 +481,6 @@ const Drivers = () => {
             headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
         }).then((response) => {
             setBaseDocImages(response.data)
-        }).catch((error) => {
-            console.log(error);
         })
     }
 
@@ -507,7 +520,7 @@ const Drivers = () => {
             axios.delete(`${value.url}/dashboard/driver/${id}/`, {
                 headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
             }).then((response) => {
-                getDrivers()
+                getList(null, activeItem)
             }).catch((error) => {
                 console.log(error);
             }).finally(() => {
@@ -518,120 +531,20 @@ const Drivers = () => {
         }
     };
 
-    const filteredDrivers = driversList.filter((item) => {
-        const searchText = getSearchText.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
-        const phoneNumber = item.phone?.toString().toLowerCase().replace(/\s+/g, '').replace(/\+/g, '');
-
-        const matchesSearch = searchText === "" || phoneNumber.includes(searchText);
-        const matchesConfirm = confirmFilter === "" ? true : item.is_confirmed === (confirmFilter === "true");
-
-        const matchesFrom =
-            from === "" || (item.from_region?.id && item.from_region.id.toString() === from.toString());
-
-        const matchesTo =
-            to === "" || (item.to_region?.id && item.to_region.id.toString() === to.toString());
-
-        return matchesSearch && matchesConfirm && matchesFrom && matchesTo;
-    });
-
-
-    const pageCount = Math.ceil(filteredDrivers.length / worksPage);
-
-    const productList = filteredDrivers.slice(pagesVisited, pagesVisited + worksPage).map((item, index) => {
-
-        return <tr key={index}>
-            <td>{index + 1}</td>
-            <td className="driver-wrapper">
-                <div className="icon-driver">
-                    <img onClick={() => {
-                        setModalShow({show: true, status: "driver-photo"});
-                        setDriverPhoto(item.profile_image)
-                    }} src={item.profile_image} alt=""/>
-                </div>
-                <div className="text-driver">
-                    <div className="name">
-                        {item.user_name && item.user_name}
-                    </div>
-                    <div className="phone">
-                        {item.phone && item.phone}
-                    </div>
-                </div>
-            </td>
-            <td>
-                {item.created_at}
-            </td>
-            <td>
-                {item.from_region && item.from_region.translations[i18next.language].name}
-                --
-                {item.to_region && item.to_region.translations[i18next.language].name}
-            </td>
-            <td>
-                {item.car_color && item.car_color.translations[i18next.language].name}&nbsp;
-                {item.car_make && item.car_make.translations[i18next.language].name} &nbsp;
-                {item.car_model && item.car_model.translations[i18next.language].name}
-            </td>
-            <td>
-                {item.car_number && item.car_number}
-            </td>
-            <td>
-                <div className="icon">
-                    <img onClick={() => getInformation(item.id)} src="./images/admin/sport-car.png" alt=""/>
-                </div>
-            </td>
-            <td>
-                <div className="icon">
-                    <img onClick={() => getCarImages(item.id)} src="./images/admin/car-photo.png" alt=""/>
-                </div>
-            </td>
-            <td>
-                <div className="icon">
-                    <img onClick={() => getDocsImages(item.id)} src="./images/admin/document.png" alt=""/>
-                </div>
-            </td>
-            <td>
-                <div className={item.is_confirmed ? "icon-check" : "icon-check disablet"}>
-                    <img onClick={() => {
-                        setModalShow({show: true, status: "driver-service"});
-                        setDriverId(item.id)
-                        setCarServiceId(item.available_services)
-                        setCarCategoriesId(item.available_categories)
-                    }} src="./images/admin/check.png" alt=""/>
-                </div>
-            </td>
-            <td>
-                <div className={item.is_block ? "icon-check" : "icon-check disablet"}>
-                    <img onClick={() => {
-                        setModalShow({show: true, status: "blocked"});
-                        if (item.is_block) {
-                            setReason(item.reason)
-                        }
-                        setDriverId(item.id)
-                    }} src="./images/admin/block.png" alt="block"/>
-
-                    {item.reason && item.is_block && <div className="reason-block">
-                        <img src="./images/admin/warning.png" alt=""/>
-                        <div className="text">
-                            {item.reason}
-                        </div>
-                    </div>}
-
-                </div>
-            </td>
-            <td>
-                <div className="icon">
-                    <img onClick={() => delDriver(item.id)} src="./images/admin/delete.png" alt=""/>
-                </div>
-            </td>
-            <td>
-            </td>
-            <div className="edit-icon">
-                <img onClick={() => {
-                    setModalShow({show: true, status: "edit-driver"});
-                    editInfo(item.id)
-                }} src="./images/admin/edit-tools.png" alt=""/>
-            </div>
-        </tr>
-    });
+    const filterData = () => {
+        setLoader(true);
+        let page = 1
+        axios.get(`${value.url}/dashboard/driver/?phone=${getSearchText}&status=${confirmFilter}&from_region=${from}&to_region=${to}`, {
+            headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
+        }).then((response) => {
+            setDriversList(response.data.results);
+            setLinks(response.data.links);
+            setPages(response.data.links.pages);
+            setActiveItem(page);
+        }).finally(() => {
+            setLoader(false);
+        });
+    }
 
     return <div className="drivers-container">
         <CSSTransition
@@ -1506,8 +1419,12 @@ const Drivers = () => {
             <div className="left-side">
                 <div className="search-box">
                     <img src="./images/admin/search.png" alt=""/>
-                    <input onChange={(e) => setGetSearchText(e.target.value)} placeholder="Telefon raqam kiriting"
+                    <input value={getSearchText} onChange={(e) => setGetSearchText(e.target.value)}
+                           placeholder="Telefon raqam kiriting"
                            type="text"/>
+                    {getSearchText &&
+                        <img style={{cursor: "pointer"}} onClick={() => setGetSearchText("")} src="./images/close.png"
+                             alt="close"/>}
                 </div>
 
                 <div className="select-sides">
@@ -1521,8 +1438,8 @@ const Drivers = () => {
                             onChange={(e) => setConfirmFilter(e.target.value)}
                         >
                             <MenuItem value="">Barchasi</MenuItem>
-                            <MenuItem value="true">Tasdiqlangan</MenuItem>
-                            <MenuItem value="false">Tasdiqlanmagan</MenuItem>
+                            <MenuItem value="1">Tasdiqlangan</MenuItem>
+                            <MenuItem value="0">Tasdiqlanmagan</MenuItem>
                         </Select>
                     </FormControl>
                 </div>
@@ -1540,10 +1457,14 @@ const Drivers = () => {
                             name="from"
                             onChange={(e) => setFrom(e.target.value)}
                         >
+                            <MenuItem value="">
+                                -- Barchasi --
+                            </MenuItem>
+
                             {
                                 regions.map((item, index) => {
                                     return <MenuItem key={index}
-                                                     value={item.id}>
+                                                     value={item.code}>
                                         {item.translations[i18next.language].name}
                                     </MenuItem>
                                 })
@@ -1563,10 +1484,13 @@ const Drivers = () => {
                             name="to"
                             onChange={(e) => setTo(e.target.value)}
                         >
+                            <MenuItem value="">
+                                -- Barchasi --
+                            </MenuItem>
                             {
                                 regions.map((item, index) => {
                                     return <MenuItem key={index}
-                                                     value={item.id}>
+                                                     value={item.code}>
                                         {item.translations[i18next.language].name}
                                     </MenuItem>
                                 })
@@ -1578,7 +1502,7 @@ const Drivers = () => {
 
             <div className="rigt-side">
                 <div className="update-driver">
-                    <img onClick={getDrivers} src="./images/admin/changes.png" alt="changes"/>
+                    <img onClick={filterData} src="./images/admin/panel.png" alt="changes"/>
                 </div>
 
                 <div onClick={() => {
@@ -1609,24 +1533,137 @@ const Drivers = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {productList}
+                {driversList.map((item, index) => {
+                    return <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td className="driver-wrapper">
+                            <div className="icon-driver">
+                                <img onClick={() => {
+                                    setModalShow({show: true, status: "driver-photo"});
+                                    setDriverPhoto(item.profile_image)
+                                }} src={item.profile_image} alt=""/>
+                            </div>
+                            <div className="text-driver">
+                                <div className="name">
+                                    {item.user_name && item.user_name}
+                                </div>
+                                <div className="phone">
+                                    {item.phone && item.phone}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {item.created_at}
+                        </td>
+                        <td>
+                            {item.from_region && item.from_region.translations[i18next.language].name}
+                            --
+                            {item.to_region && item.to_region.translations[i18next.language].name}
+                        </td>
+                        <td>
+                            {item.car_color && item.car_color.translations[i18next.language].name}&nbsp;
+                            {item.car_make && item.car_make.translations[i18next.language].name} &nbsp;
+                            {item.car_model && item.car_model.translations[i18next.language].name}
+                        </td>
+                        <td>
+                            {item.car_number && item.car_number}
+                        </td>
+                        <td>
+                            <div className="icon">
+                                <img onClick={() => getInformation(item.id)} src="./images/admin/sport-car.png" alt=""/>
+                            </div>
+                        </td>
+                        <td>
+                            <div className="icon">
+                                <img onClick={() => getCarImages(item.id)} src="./images/admin/car-photo.png" alt=""/>
+                            </div>
+                        </td>
+                        <td>
+                            <div className="icon">
+                                <img onClick={() => getDocsImages(item.id)} src="./images/admin/document.png" alt=""/>
+                            </div>
+                        </td>
+                        <td>
+                            <div className={item.is_confirmed ? "icon-check" : "icon-check disablet"}>
+                                <img onClick={() => {
+                                    setModalShow({show: true, status: "driver-service"});
+                                    setDriverId(item.id)
+                                    setCarServiceId(item.available_services)
+                                    setCarCategoriesId(item.available_categories)
+                                }} src="./images/admin/check.png" alt=""/>
+                            </div>
+                        </td>
+                        <td>
+                            <div className={item.is_block ? "icon-check" : "icon-check disablet"}>
+                                <img onClick={() => {
+                                    setModalShow({show: true, status: "blocked"});
+                                    if (item.is_block) {
+                                        setReason(item.reason)
+                                    }
+                                    setDriverId(item.id)
+                                }} src="./images/admin/block.png" alt="block"/>
+
+                                {item.reason && item.is_block && <div className="reason-block">
+                                    <img src="./images/admin/warning.png" alt=""/>
+                                    <div className="text">
+                                        {item.reason}
+                                    </div>
+                                </div>}
+
+                            </div>
+                        </td>
+                        <td>
+                            <div className="icon">
+                                <img onClick={() => delDriver(item.id)} src="./images/admin/delete.png" alt=""/>
+                            </div>
+                        </td>
+                        <td>
+                        </td>
+                        <div className="edit-icon">
+                            <img onClick={() => {
+                                setModalShow({show: true, status: "edit-driver"});
+                                editInfo(item.id)
+                            }} src="./images/admin/edit-tools.png" alt=""/>
+                        </div>
+                    </tr>
+                })}
                 </tbody>
             </table>
         </div>}
 
         <div className="pagination">
-            {driversList.length > 100 ? <ReactPaginate
-                breakLabel="..."
-                previousLabel={<img src="./images/admin/prev.png" alt=""/>}
-                nextLabel={<img src="./images/admin/next.png" alt=""/>}
-                pageCount={pageCount}
-                onPageChange={changePage}
-                containerClassName={"paginationBttns"}
-                previousLinkClassName={"previousBttn"}
-                nextLinkClassName={"nextBttn"}
-                disabledCalassName={"paginationDisabled"}
-                activeClassName={"paginationActive"}
-            /> : ""}
+            <div onClick={() => {
+                if (activeItem > 1) {
+                    getList(links.previous, activeItem - 1);
+                }
+            }} className="prev">
+                <img src="./images/admin/prev.png" alt="Prev"/>
+            </div>
+
+            {visiblePages.map((item, index) => (
+                <div key={index}
+                     onClick={() => {
+                         if (item !== "...") {
+                             const pageNumber = item;
+                             const pageObj = Pages.find(item_page => item_page[pageNumber]);
+                             const pageUrl = pageObj ? pageObj[pageNumber] : null;
+
+                             getList(pageUrl, item);
+                         }
+                     }}
+                     className={`items ${activeItem === item ? "active" : ""} `}
+                     style={{cursor: item === "..." ? "default" : "pointer"}}>
+                    {item}
+                </div>
+            ))}
+
+            <div className="next" onClick={() => {
+                if (activeItem < totalPages) {
+                    getList(links.next, activeItem + 1);
+                }
+            }}>
+                <img src="./images/admin/next.png" alt="Next"/>
+            </div>
         </div>
     </div>
 }
