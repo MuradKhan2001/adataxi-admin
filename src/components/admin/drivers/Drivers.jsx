@@ -19,6 +19,7 @@ import {useTranslation} from "react-i18next";
 import LoaderAdmin from "../loader-admin/LoaderAdmin";
 import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
+import {useOnKeyPress} from "./useOnKeyPress";
 
 const Drivers = () => {
     const {t} = useTranslation();
@@ -385,6 +386,15 @@ const Drivers = () => {
                 headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
             }).then((response) => {
             setModalShow({status: "", show: false})
+
+            setDriversList(prevList =>
+                prevList.map(item =>
+                    item.id === driverId
+                        ? {...item, is_confirmed: true}
+                        : item
+                )
+            );
+
         })
     }
 
@@ -545,6 +555,8 @@ const Drivers = () => {
             setLoader(false);
         });
     }
+
+    useOnKeyPress(filterData, 'Enter');
 
     return <div className="drivers-container">
         <CSSTransition
