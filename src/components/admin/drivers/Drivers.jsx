@@ -1602,7 +1602,7 @@ const Drivers = () => {
                                     setDriverId(item.id)
                                     setCarServiceId(item.available_services)
                                     setCarCategoriesId(item.available_categories)
-                                }} src="./images/admin/check.png" alt=""/>
+                                }} src="./images/admin/varify.png" alt="varify"/>
                             </div>
                         </td>
                         <td>
