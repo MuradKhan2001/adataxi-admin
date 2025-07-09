@@ -165,21 +165,21 @@ const Orders = () => {
                                         <div className="text">{information.end_date}</div>
                                     </div>
                                 }
+
                                 <div className="info">
                                     <div className="title">Olib ketish manzili:</div>
-
-                                    <div
-                                        className="text">{information.drop_off_locations && information.drop_off_locations.map((item, index) => {
-                                        return <div key={index}> {index + 1}- manzil : {item.address} <br/></div>
-
-                                    })}</div>
-                                </div>
-                                <div className="info">
-                                    <div className="title">Yekazish manzili:</div>
-
                                     <div
                                         className="text">{information.pick_up_locations && information.pick_up_locations.map((item, index) => {
                                         return <div key={index}>{index + 1}- manzil : {item.address} <br/></div>
+
+                                    })}</div>
+                                </div>
+
+                                <div className="info">
+                                    <div className="title">Yekazish manzili:</div>
+                                    <div
+                                        className="text">{information.drop_off_locations && information.drop_off_locations.map((item, index) => {
+                                        return <div key={index}> {index + 1}- manzil : {item.address} <br/></div>
 
                                     })}</div>
                                 </div>
