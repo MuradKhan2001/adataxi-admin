@@ -590,11 +590,11 @@ const Price = () => {
                 </div>
             </div>
 
-            <div onClick={() => {
-                setModalShow({show: true, status: "add-driver"});
-            }} className="add-driver-btn">
-                Narx qo'shish
-            </div>
+            {/*<div onClick={() => {*/}
+            {/*    setModalShow({show: true, status: "add-driver"});*/}
+            {/*}} className="add-driver-btn">*/}
+            {/*    Narx qo'shish*/}
+            {/*</div>*/}
         </div>
 
         {loader ? <LoaderAdmin/> : <div className="table-wrapper">

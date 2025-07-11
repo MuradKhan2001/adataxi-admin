@@ -547,6 +547,7 @@ const Orders = () => {
                                                 {item.status === "active" && "Faol"}
                                                 {item.status === "started" && "Boshlandi"}
                                                 {item.status === "arrived" && "Mijozga keldi"}
+                                                {item.status === "accepted" && "Haydovchi qabul qildi"}
                                                 {item.status === "picked" && "Mijozni oldi"}
                                             </div>
                                             <img onClick={() => {
