@@ -142,7 +142,6 @@ const Orders = () => {
                             <div className="title">
                                 Qo'shimcha malumotlar
                             </div>
-                            {console.log(information)}
                             <div className="information">
                                 <div className="info">
                                     <div className="title">Buyurtma raqami:</div>
@@ -157,7 +156,12 @@ const Orders = () => {
                                 <div className="info">
                                     <div className="title">Masofa:</div>
                                     <div
-                                        className="text">{information.distance}</div>
+                                        className="text">{information.distance} km</div>
+                                </div>
+                                <div className="info">
+                                    <div className="title">Narx:</div>
+                                    <div
+                                        className="text">{information.price} so'm</div>
                                 </div>
                                 {
                                     information.end_date && <div className="info">
@@ -196,11 +200,10 @@ const Orders = () => {
                                     </div>
                                 }
 
-                                <div className="info">
+                                {information.car_service.service_type !== "postal" &&  <div className="info">
                                     <div className="title">Yo'lovchilar soni:</div>
-                                    <div
-                                        className="text">{information.passanger_count}</div>
-                                </div>
+                                    <div className="text">{information.passanger_count}</div>
+                                </div>}
 
                                 <div className="info">
                                     <div className="title">To'lov turi:</div>
@@ -208,7 +211,6 @@ const Orders = () => {
                                         {information.payment_type === "cash" && "Naqt"}
                                         {information.payment_type === "card" && "Karta"}
                                     </div>
-
                                 </div>
 
                                 <div className="info">
@@ -216,7 +218,14 @@ const Orders = () => {
                                     <div className="text">
                                         {information.pick_up_date}
                                     </div>
+                                </div>
 
+                                <div className="info">
+                                    <div className="title">Barcha o'rindiqlar band qilish:</div>
+                                    <div className="text">
+                                        {information.book_all_seats === true && "Ha"}
+                                        {information.book_all_seats === false && "Yo'q"}
+                                    </div>
                                 </div>
 
                                 {information.car_service.service_type === "postal" && <div className="info">
@@ -261,6 +270,7 @@ const Orders = () => {
                                             {information.comment_to_driver}
                                         </div>
                                     </div>}
+
 
 
                             </div>

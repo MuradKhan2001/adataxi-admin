@@ -23,7 +23,7 @@ const LoginAdmin = () => {
                 window.location.pathname = '/dashboard';
                 localStorage.setItem("lng", "uz")
             }).catch((error) => {
-                if (error.response.status === 404) alert("Bu foydalanuvchi topilmadi");
+                if (error.response?.status === 404) alert("Bu foydalanuvchi topilmadi");
             });
 
         } else alert("Formani to'ldiring")

@@ -336,16 +336,18 @@ const Drivers = () => {
     }
 
     const blockDriver = (status) => {
-        if (status === "block" && reason.trim().length > 0) {
-            axios.post(`${value.url}/dashboard/driver/block-driver/`,
-                {driver_id: driverId, reason}, {
-                    headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
-                }).then((response) => {
-                setModalShow({status: "", show: false})
-                getList(null, activeItem)
-                setReason("")
-            })
-        } else alert("Bloklash sababini kiriting!")
+        if (status === "block") {
+            if (reason.trim().length > 0) {
+                axios.post(`${value.url}/dashboard/driver/block-driver/`,
+                    {driver_id: driverId, reason}, {
+                        headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
+                    }).then((response) => {
+                    setModalShow({status: "", show: false})
+                    getList(null, activeItem)
+                    setReason("")
+                })
+            } else alert("Bloklash sababini kiriting!")
+        }
 
         if (status === "unblock") {
             axios.post(`${value.url}/dashboard/driver/unblock-driver/`,
@@ -354,6 +356,7 @@ const Drivers = () => {
                 }).then((response) => {
                 setModalShow({status: "", show: false})
                 getList(null, activeItem)
+                setReason("")
             })
         }
     }

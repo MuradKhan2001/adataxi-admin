@@ -114,6 +114,7 @@ const MainHome = () => {
                 mapContainerClassName="map-container">
 
                 {locationsList.map((item, index) => (
+                    item.latitude && item.longitude &&
                     <MarkerF
                         key={index}
                         position={{lat: item.latitude, lng: item.longitude}}
@@ -140,7 +141,6 @@ const MainHome = () => {
                         </div>
                     </InfoWindow>
                 )}
-
 
 
             </GoogleMap>
