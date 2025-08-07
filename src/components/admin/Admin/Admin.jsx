@@ -82,6 +82,11 @@ const Admin = () => {
             url: "/payment",
             img: "../images/admin/credit-card.png"
         },
+        {
+            name: "Yangiliklar",
+            url: "/news",
+            img: "../images/admin/megaphone.png"
+        },
     ];
 
     useEffect(() => {

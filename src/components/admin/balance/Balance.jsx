@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef, useState, useMemo, useContext} from "react";
+import {useEffect, useRef, useState, useMemo, useContext} from "react";
 import ReactPaginate from "react-paginate";
 import "./style.scss"
 import axios from "axios";
@@ -20,7 +20,6 @@ const Balance = () => {
             },
         }).then((response) => {
             setDriversList(response.data);
-            console.log(response.data);
         })
     }, []);
 
@@ -31,7 +30,7 @@ const Balance = () => {
             return searchText === "" || phoneNumber.includes(searchText);
         }).map((item, index) => {
             return <tr key={index}>
-                <td>{index + 1}</td>
+                <td>{pagesVisited + index + 1}</td>
                 <td className="driver-wrapper">
                     <div className="text-driver">
                         <div
@@ -86,9 +85,8 @@ const Balance = () => {
             </table>
         </div>
 
-
         <div className="pagination">
-            {driversList.length > 100 ? <ReactPaginate
+            <ReactPaginate
                 breakLabel="..."
                 previousLabel={<img src="./images/admin/prev.png" alt=""/>}
                 nextLabel={<img src="./images/admin/next.png" alt=""/>}
@@ -99,7 +97,7 @@ const Balance = () => {
                 nextLinkClassName={"nextBttn"}
                 disabledCalassName={"paginationDisabled"}
                 activeClassName={"paginationActive"}
-            /> : ""}
+            />
         </div>
 
     </div>

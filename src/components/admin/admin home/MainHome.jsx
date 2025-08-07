@@ -113,15 +113,22 @@ const MainHome = () => {
                 options={options}
                 mapContainerClassName="map-container">
 
-                {locationsList.map((item, index) => (
-                    item.latitude && item.longitude &&
-                    <MarkerF
-                        key={index}
-                        position={{lat: item.latitude, lng: item.longitude}}
-                        icon={icon}
-                        onClick={() => onMarkerClick(item)}
-                    />
-                ))}
+                {locationsList
+                    .filter(item => {
+                        const lat = Number(item.latitude);
+                        const lng = Number(item.longitude);
+                        return !isNaN(lat) && !isNaN(lng);
+                    })
+                    .map((item, index) => (
+                        <MarkerF
+                            key={index}
+                            position={{ lat: Number(item.latitude), lng: Number(item.longitude) }}
+                            icon={icon}
+                            onClick={() => onMarkerClick(item)}
+                        />
+                    ))}
+
+
 
                 {selectedLocation && (
                     <InfoWindow

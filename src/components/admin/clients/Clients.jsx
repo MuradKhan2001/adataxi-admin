@@ -90,6 +90,7 @@ const Clients = () => {
             }
         }).then((response) => {
             setDriversList(response.data.results);
+            console.log(response.data.results)
             setLinks(response.data.links);
             setPages(response.data.links.pages);
             setActiveItem(page);

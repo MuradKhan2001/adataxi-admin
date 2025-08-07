@@ -42,7 +42,7 @@ const Payment = () => {
             return searchText === "" || phoneNumber.includes(searchText);
         }).map((item, index) => {
             return <tr key={index}>
-                <td>{index + 1}</td>
+                <td>{pagesVisited + index + 1}</td>
 
                 <td>
                     {item.balance_id}
@@ -100,7 +100,7 @@ const Payment = () => {
         </div>
 
         <div className="pagination">
-            {driversList.length > 100 ? <ReactPaginate
+            <ReactPaginate
                 breakLabel="..."
                 previousLabel={<img src="./images/admin/prev.png" alt=""/>}
                 nextLabel={<img src="./images/admin/next.png" alt=""/>}
@@ -111,7 +111,7 @@ const Payment = () => {
                 nextLinkClassName={"nextBttn"}
                 disabledCalassName={"paginationDisabled"}
                 activeClassName={"paginationActive"}
-            /> : ""}
+            />
         </div>
     </div>
 }

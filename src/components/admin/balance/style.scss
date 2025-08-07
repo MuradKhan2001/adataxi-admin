@@ -56,7 +56,7 @@
     width: 100%;
     height: 80%;
     overflow-y: auto;
-    padding-bottom: 40px;
+    padding-bottom: 10px;
 
     table {
       width: 100%;
@@ -80,7 +80,6 @@
       }
 
       tbody {
-
         tr {
           position: relative;
           border-bottom: 1px solid #e8e6e6;
@@ -234,10 +233,8 @@
   }
 
   .pagination {
-    margin-top: 70px;
-
+    margin-top: 10px;
     .paginationBttns {
-      margin-top: 40px;
       display: flex !important;
       align-items: center;
       width: 100%;

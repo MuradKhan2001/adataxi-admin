@@ -41,7 +41,7 @@
     overflow-y: auto;
 
     .modal-card {
-      width: max-content;
+
       height: max-content;
       background-color: white;
       box-shadow: 0 33px 97px 0 #002C5714;
@@ -78,22 +78,23 @@
 
         .information {
           margin-top: 20px;
-          margin-right: 100px;
+
 
           .info {
             display: flex;
-            align-items: center;
+            border-bottom: 1px solid #f1f1f1;
 
             .title {
+              align-items: flex-start;
               font-size: 18px;
               color: #717070;
               margin-right: 10px;
             }
 
             .text {
+              max-width: 600px;
               font-size: 20px;
               color: #5a5959;
-
             }
           }
         }
@@ -202,6 +203,7 @@
         .form-box {
           margin-top: 20px;
           width: 100%;
+
           .statistic-box {
             display: flex;
             align-items: center;
@@ -369,11 +371,11 @@
             font-weight: bold;
             color: #717070;
 
-            .status-red{
+            .status-red {
               color: #910000;
             }
 
-            .status-green{
+            .status-green {
               color: #079539;
             }
 
@@ -385,8 +387,8 @@
               align-items: center;
               justify-content: center;
 
-              .status-blue{
-              color: #074197;
+              .status-blue {
+                color: #074197;
               }
 
               img {
@@ -398,7 +400,8 @@
                   transform: scale(1.1);
                 }
               }
-              .status-icon{
+
+              .status-icon {
                 width: 25px;
                 margin-left: 5px;
               }

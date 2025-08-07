@@ -15,6 +15,7 @@ import Payment from "./components/admin/payment/Payment";
 import RejectReason from "./components/admin/reject-reason/RejectReason";
 import ExtraServices from "./components/admin/extra-services/ExtraServices";
 import Price from "./components/admin/price/Price";
+import News from "./components/admin/news/News";
 
 export const adminRoutes = [
     {
@@ -80,10 +81,14 @@ export const adminPageRoutes = [
         path: "/extra-services",
         element: <ExtraServices/>
     },
-
     {
         path: "/price",
         element: <Price/>
+    },
+
+    {
+        path: "/news",
+        element: <News/>
     },
 
 ];
