@@ -58,6 +58,7 @@ const Drivers = () => {
 
     const [from, setFrom] = useState("");
     const [to, setTo] = useState("");
+    const [car_categoriesFilter, setCar_categoriesFilter] = useState("");
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -547,7 +548,7 @@ const Drivers = () => {
     const filterData = () => {
         setLoader(true);
         let page = 1
-        axios.get(`${value.url}/dashboard/driver/?phone=${getSearchText}&status=${confirmFilter}&from_region=${from}&to_region=${to}`, {
+        axios.get(`${value.url}/dashboard/driver/?phone=${getSearchText}&status=${confirmFilter}&from_region=${from}&to_region=${to}&car_categories=${car_categoriesFilter}`, {
             headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
         }).then((response) => {
             setDriversList(response.data.results);
@@ -1463,6 +1464,32 @@ const Drivers = () => {
             <div className="filter-wrapper">
                 <div className="select-sides">
                     <FormControl sx={{m: 1, minWidth: "100%"}} size="small" className="selectMui">
+                        <InputLabel id="demo-select-large-label">Tarif</InputLabel>
+                        <Select
+                            labelid="demo-select-small-label"
+                            id="demo-select-small"
+                            value={to}
+                            label="Tarif"
+                            name="car_categories"
+                            onChange={(e) => setCar_categoriesFilter(e.target.value)}
+                        >
+                            <MenuItem value="">
+                                -- Barchasi --
+                            </MenuItem>
+                            {
+                                car_categories.map((item, index) => {
+                                    return <MenuItem key={index}
+                                                     value={item.id}>
+                                        {item.translations[i18next.language].name}
+                                    </MenuItem>
+                                })
+                            }
+                        </Select>
+                    </FormControl>
+                </div>
+
+                <div className="select-sides">
+                    <FormControl sx={{m: 1, minWidth: "100%"}} size="small" className="selectMui">
                         <InputLabel id="demo-select-large-label">Qayerdan</InputLabel>
                         <Select
                             labelid="demo-select-small-label"
@@ -1519,13 +1546,19 @@ const Drivers = () => {
                 <div className="update-driver">
                     <img onClick={filterData} src="./images/admin/panel.png" alt="changes"/>
                 </div>
-
+            </div>
+        </div>
+        <div className="header">
+            <div></div>
+            <div></div>
+            <div className="rigt-side">
                 <div onClick={() => {
                     setModalShow({show: true, status: "add-driver"});
                 }} className="add-driver-btn">
                     Haydovchi qo'shish
                 </div>
             </div>
+
         </div>
 
         {loader ? <LoaderAdmin/> : <div className="table-wrapper">

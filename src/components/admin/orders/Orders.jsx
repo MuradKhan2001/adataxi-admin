@@ -156,12 +156,14 @@ const Orders = () => {
                                 <div className="info">
                                     <div className="title">Masofa:</div>
                                     <div
-                                        className="text">{information.distance} km</div>
+                                        className="text">{information.distance} km
+                                    </div>
                                 </div>
                                 <div className="info">
                                     <div className="title">Narx:</div>
                                     <div
-                                        className="text">{information.price} so'm</div>
+                                        className="text">{information.price} so'm
+                                    </div>
                                 </div>
                                 {
                                     information.end_date && <div className="info">
@@ -200,7 +202,7 @@ const Orders = () => {
                                     </div>
                                 }
 
-                                {information.car_service.service_type !== "postal" &&  <div className="info">
+                                {information.car_service.service_type !== "postal" && <div className="info">
                                     <div className="title">Yo'lovchilar soni:</div>
                                     <div className="text">{information.passanger_count}</div>
                                 </div>}
@@ -270,9 +272,6 @@ const Orders = () => {
                                             {information.comment_to_driver}
                                         </div>
                                     </div>}
-
-
-
                             </div>
                         </div>
                     )}
@@ -534,9 +533,24 @@ const Orders = () => {
                                 <td>
                                     {item.car_category.translations[i18next.language].name}
                                 </td>
+
                                 <td>
-                                    {item.price} so'm
+
+
+                                    {
+                                        item.discount_price > 0 ? <div className="discount-pirce">
+                                            <div className="main">
+                                                {item.price} so'm
+                                            </div>
+
+                                            <div className="discount">
+                                                {item.discount_price} so'm
+                                            </div>
+                                        </div> : <div>{item.price} so'm</div>
+                                    }
+
                                 </td>
+
                                 <td>
                                     <div className="icon">
                                         <img onClick={() => {

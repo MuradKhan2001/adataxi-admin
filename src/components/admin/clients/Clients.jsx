@@ -452,7 +452,8 @@ const Clients = () => {
             <div className="left-side">
                 <div className="search-box">
                     <img src="./images/admin/find-person.png" alt=""/>
-                    <input value={getSearchText} onChange={(e) => setGetSearchText(e.target.value)} placeholder="Telefon raqam kiriting"
+                    <input value={getSearchText} onChange={(e) => setGetSearchText(e.target.value)}
+                           placeholder="Telefon raqam kiriting"
                            type="text"/>
                     {getSearchText &&
                         <img style={{cursor: "pointer"}} onClick={() => setGetSearchText("")} src="./images/close.png"
@@ -480,6 +481,7 @@ const Clients = () => {
                     <th>№</th>
                     <th>Mijoz haqida</th>
                     <th>Telefon raqam</th>
+                    <th>Bonuslar</th>
                     <th>Jinsi</th>
                     <th>Bloklash</th>
                     <th>O'chirish</th>
@@ -507,6 +509,9 @@ const Clients = () => {
                         </td>
                         <td>
                             {item.phone}
+                        </td>
+                        <td>
+                            {item.discount_count}
                         </td>
                         <td>
                             {item.gender}

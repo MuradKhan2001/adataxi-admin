@@ -350,7 +350,6 @@
       }
 
       tbody {
-
         tr {
           position: relative;
           border-bottom: 1px solid #e8e6e6;
@@ -451,6 +450,18 @@
               img {
                 -webkit-filter: grayscale(100%);
                 filter: grayscale(100%);
+              }
+            }
+
+            .discount-pirce {
+              .main {
+                color: gray;
+                text-decoration: line-through;
+              }
+
+              .discount {
+                color: #00c389;
+
               }
             }
           }
