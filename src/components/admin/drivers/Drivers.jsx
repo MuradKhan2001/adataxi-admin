@@ -1468,7 +1468,7 @@ const Drivers = () => {
                         <Select
                             labelid="demo-select-small-label"
                             id="demo-select-small"
-                            value={to}
+                            value={car_categoriesFilter}
                             label="Tarif"
                             name="car_categories"
                             onChange={(e) => setCar_categoriesFilter(e.target.value)}
