@@ -26,6 +26,7 @@ const Orders = () => {
     const [direction, setDirection] = useState("");
     const [tarif, setTarif] = useState("");
     const [date, setDate] = useState("");
+    const [viewDrivers, setViewDrivers] = useState([]);
 
     const [links, setLinks] = useState({});
     const [Pages, setPages] = useState([]);
@@ -388,6 +389,42 @@ const Orders = () => {
                             </div>
                         </div>
                     )}
+
+                    {modalShow.status === "views-drivers" && (
+                        <div className="views-drivers">
+                            <div className="cancel-btn">
+                                <img
+                                    onClick={() => setModalShow({status: "", show: false})}
+                                    src="./images/admin/x.png"
+                                    alt=""
+                                />
+                            </div>
+                            <div className="title">
+                                Buyurtmani ko'rgan haydovchilar
+                            </div>
+                            <div className="information">
+                                {viewDrivers.map((item, index) => (
+
+                                    <div key={index} className="info">
+                                        <div className="left-side">
+                                            <div className="fullname">
+                                                {item.driver?.first_name} &nbsp;
+                                                {item.driver?.last_name}
+                                            </div>
+                                            <div className="phone">
+                                                {item.driver?.phone}
+                                            </div>
+                                        </div>
+                                        <div className="right-side">
+                                            <div className="time">
+                                                {item.viewed_at}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </CSSTransition>
@@ -497,6 +534,7 @@ const Orders = () => {
                             <th>Buyurtma narxi</th>
                             <th>Batafsil ma'lumotlar</th>
                             <th>Statusni ozgartirish</th>
+                            <th>Ko'rishlar soni</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -533,7 +571,6 @@ const Orders = () => {
                                 <td>
                                     {item.car_category.translations[i18next.language].name}
                                 </td>
-
                                 <td>
 
 
@@ -550,7 +587,6 @@ const Orders = () => {
                                     }
 
                                 </td>
-
                                 <td>
                                     <div className="icon">
                                         <img onClick={() => {
@@ -580,6 +616,19 @@ const Orders = () => {
                                             }} className="status-icon" src="./images/admin/status.png" alt=""/>
                                         </div>}
 
+                                </td>
+                                <td>
+                                    <div className="views">
+                                        <div className="num-views">
+                                            {item.view_count}
+                                        </div>
+                                        <div className="icon-view">
+                                            <img onClick={()=> {
+                                                setViewDrivers(item.viewers)
+                                                setModalShow({show: true, status: "views-drivers"});
+                                            }} src="./images/admin/view1.png" alt="view"/>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         })}
@@ -622,7 +671,6 @@ const Orders = () => {
                 <img src="./images/admin/next.png" alt="Next"/>
             </div>
         </div>
-
     </div>
 }
 

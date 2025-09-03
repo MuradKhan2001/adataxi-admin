@@ -219,6 +219,71 @@
         }
       }
 
+      .views-drivers {
+        margin: 30px;
+        width: max-content;
+        height: max-content;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding-right: 20px;
+
+        .cancel-btn {
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          background-color: white;
+
+          img {
+            cursor: pointer;
+            width: 30px;
+            transition: 0.3s;
+          }
+
+          &:hover {
+            img {
+              transform: scale(1.2);
+            }
+          }
+        }
+
+        .title {
+          text-align: center;
+          font-size: 24px;
+          line-height: 32px;
+        }
+
+        .information {
+          margin-top: 20px;
+
+          .info {
+            margin: 6px;
+            display: flex;
+            border-bottom: 1px solid #f1f1f1;
+            justify-content: space-between;
+            align-items: flex-end;
+
+            .left-side {
+              .fullname {
+
+              }
+
+              .phone {
+                font-size: 14px;
+                color: #5a5959;
+              }
+            }
+
+            .right-side {
+              font-size: 12px;
+              color: #5a5959;
+            }
+          }
+        }
+      }
+
     }
   }
 
@@ -462,6 +527,23 @@
               .discount {
                 color: #00c389;
 
+              }
+            }
+
+            .views {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              .num-views {
+                margin-right: 6px;
+              }
+
+              .icon-view {
+                img {
+                  cursor: pointer;
+                  width: 23px;
+                }
               }
             }
           }
