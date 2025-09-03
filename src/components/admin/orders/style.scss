@@ -437,6 +437,11 @@
 
             .status-red {
               color: #910000;
+
+              .rejected-time{
+                font-size: 12px;
+                color: #5a5959;
+              }
             }
 
             .status-green {

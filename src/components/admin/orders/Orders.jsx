@@ -596,9 +596,11 @@ const Orders = () => {
                                     </div>
                                 </td>
                                 <td>
-
                                     {item.status === "rejected" ? <div className="status-red">
                                         Bekor qilingan
+                                      <div className="rejected-time">
+                                          {item.rejected_time}
+                                      </div>
                                     </div> : item.status === "finished" ? <div className="status-green">
                                             Yakunlangan
                                         </div> :
@@ -615,7 +617,6 @@ const Orders = () => {
                                                 setModalShow({show: true, status: "change-status"});
                                             }} className="status-icon" src="./images/admin/status.png" alt=""/>
                                         </div>}
-
                                 </td>
                                 <td>
                                     <div className="views">
