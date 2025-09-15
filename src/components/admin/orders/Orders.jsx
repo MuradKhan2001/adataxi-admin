@@ -23,6 +23,7 @@ const Orders = () => {
     const [client, setClient] = useState("");
     const [driver, setDriver] = useState("");
     const [status, setStatus] = useState("");
+    const [accepted, setAccepted] = useState("");
     const [direction, setDirection] = useState("");
     const [tarif, setTarif] = useState("");
     const [date, setDate] = useState("");
@@ -108,7 +109,7 @@ const Orders = () => {
     const filterData = () => {
         setLoader(true);
         let page = 1
-        axios.get(`${value.url}/dashboard/order/?client_phone=${client}&driver_phone=${driver}&service_type=${direction}&category_type=${tarif}&created_date=${date}&status=${status}`, {
+        axios.get(`${value.url}/dashboard/order/?client_phone=${client}&driver_phone=${driver}&service_type=${direction}&category_type=${tarif}&created_date=${date}&status=${status}&accepted=${accepted}`, {
             headers: {"Authorization": `Token ${localStorage.getItem("token")}`}
         }).then((response) => {
             setDriversList(response.data.results);
@@ -479,7 +480,10 @@ const Orders = () => {
                 <div className="search-box">
                     <label htmlFor="status">Status:</label>
                     <select value={status} onChange={(e) => setStatus(e.target.value)} name="status" id="status">
-                        <option value=""></option>
+                        <option value="">Hammasi</option>
+                        <option value="accepted">
+                           Haydovchi qabul qildi
+                        </option>
                         <option value="rejected">
                             Bekor qilingan
                         </option>
